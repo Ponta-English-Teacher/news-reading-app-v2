@@ -1,0 +1,76 @@
+[
+  {
+    "id": "2025-001",
+    "category": "Local",
+    "source": "Generated",
+    "publishedAt": "2025-09-19T09:00:00Z",
+    "segments": [
+      {
+        "id": "seg-1",
+        "type": "SHORT_UPDATE",
+        "kicker": "Short Update",
+        "headline_en": "City Begins Pocket Park Plan",
+        "headline_ja": "市がポケットパーク計画を開始",
+        "variants": {
+          "JHS": {
+            "en": {
+              "greeting": "Hello and welcome to News Today.",
+              "lead": "Here is a quick update from City Hall.",
+              "summary": "The city is making new small parks.",
+              "body": "Leaders want to change empty land into green parks. Families can rest there and children can play.",
+              "signoff": "You're watching News Today.",
+              "easy": {
+                "summary": "City makes small parks.",
+                "body": "Empty land → small parks with trees and benches."
+              }
+            },
+            "ja": {
+              "greeting": "こんにちは、News Today です。",
+              "lead": "市役所からの短いお知らせです。",
+              "summary": "市は新しい小さな公園を作っています。",
+              "body": "市は空き地を緑のある公園に変えます。家族が休み、子どもが遊べます。",
+              "signoff": "News Today をご覧いただきありがとうございます。",
+              "easy": {
+                "summary": "市が小さい公園をつくる。",
+                "body": "あきち → 小さい公園。木やベンチがあります。",
+                "withFurigana": "市（し）は 空（あき）地（ち）を 公園（こうえん）に 変（か）えます。"
+              }
+            }
+          },
+          "HS": {
+            "en": {
+              "greeting": "Good evening, this is News Today.",
+              "lead": "A brief update on a local green-space initiative.",
+              "summary": "Officials launched a pocket park initiative.",
+              "body": "The city will turn unused land into pocket parks. Community groups will help design them.",
+              "signoff": "Thank you for watching News Today."
+            },
+            "ja": {
+              "greeting": "こんばんは、News Today です。",
+              "lead": "地域の緑地拡充に関する短い続報です。",
+              "summary": "市がポケットパーク計画を開始しました。",
+              "body": "未活用の土地を小規模な公園に変える取り組みです。地域団体が設計に助言します。",
+              "signoff": "ご視聴ありがとうございました。"
+            }
+          }
+        },
+        "vocab": [
+          {
+            "id": "w1",
+            "headword": "initiative",
+            "pos": "noun",
+            "ipa": "/ɪˈnɪʃətɪv/",
+            "def_en": "a plan or action to improve something",
+            "ja": "新たな取り組み・構想",
+            "example_en": "The city launched an initiative to create pocket parks.",
+            "example_ja": "市はポケットパークを作る取り組みを開始した."
+          }
+        ],
+        "drills": [
+          { "id": "d1", "lang": "en", "text": "Good evening, and thank you for watching News Today." },
+          { "id": "d2", "lang": "ja", "text": "ご視聴ありがとうございます。News Today です。" }
+        ]
+      }
+    ]
+  }
+]
