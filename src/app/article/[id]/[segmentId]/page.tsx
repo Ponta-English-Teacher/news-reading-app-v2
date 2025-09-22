@@ -28,6 +28,14 @@ export default function ArticlePage({
   // ---Model TTS---
   const [isTtsLoading, setIsTtsLoading] = useState(false);
   const [ttsUrl, setTtsUrl] = useState<string | null>(null);
+
+  function clearSelection() {
+    try {
+      const sel = window.getSelection?.();
+      if (sel && sel.rangeCount) sel.removeAllRanges();
+    } catch {}
+  }
+
   async function handlePlayModelSpeech() {
     clearSelection();
     if (!variant) return;
@@ -47,7 +55,7 @@ export default function ArticlePage({
     }
   }
 
-  // ---Recording (pause/resume, progress, selection-safe)---
+  // ---Recording (pause/resume, selection-safe)---
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const recordedChunksRef = useRef<BlobPart[]>([]);
   const [isRecording, setIsRecording] = useState(false);
@@ -56,14 +64,6 @@ export default function ArticlePage({
   const [fileExt, setFileExt] = useState<"webm" | "mp4">("webm");
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [durationSec, setDurationSec] = useState<number | null>(null);
-
-  function clearSelection() {
-    try {
-      // prevent dictionary popup from button clicks
-      const sel = window.getSelection?.();
-      if (sel && sel.rangeCount) sel.removeAllRanges();
-    } catch {}
-  }
 
   function pickBestMime(): { mime: string; ext: "webm" | "mp4" } {
     const webm = "audio/webm;codecs=opus";
@@ -168,40 +168,71 @@ export default function ArticlePage({
   // ---Dictionary (floating) + glossary---
   const [floatOpen, setFloatOpen] = useState(false);
   const [dictQuery, setDictQuery] = useState("");
+
   const [glossary, setGlossary] = useState<
     { term: string; def_en?: string; ja?: string; source: "json" | "openai" }[]
   >([]);
 
-// Autofill on text selection (desktop + iOS) → open popup centered
-useEffect(() => {
-  let timer: number | undefined;
+  // Track OS text selection (desktop + iOS)
+  const [selectedText, setSelectedText] = useState("");
 
-  const readSelection = () => {
-    if (timer) window.clearTimeout(timer);
-    timer = window.setTimeout(() => {
-      const selObj = document.getSelection?.();
-      const text = (selObj?.toString() || "").trim();
-      if (!text) return;
+  useEffect(() => {
+    const update = () => {
+      const t = (document.getSelection?.()?.toString() || "").trim();
+      setSelectedText(t);
+    };
+    document.addEventListener("selectionchange", update);
+    document.addEventListener("touchend", update, { passive: true } as any);
+    document.addEventListener("mouseup", update);
+    return () => {
+      document.removeEventListener("selectionchange", update);
+      document.removeEventListener("touchend", update as any);
+      document.removeEventListener("mouseup", update);
+    };
+  }, []);
 
-      const anchorEl = (selObj?.anchorNode as Node | null)?.parentElement ?? null;
-      if (anchorEl && anchorEl.closest(".fd-titlebar")) return;
+  // Button handler: open dict with current selection
+  function openDictFromSelection() {
+    if (!selectedText) return;
+    setDictQuery(selectedText);
+    setFloatOpen(true);
+    try {
+      document.getSelection?.()?.removeAllRanges();
+    } catch {}
+    setSelectedText("");
+  }
 
-      setDictQuery(text);
-      setFloatOpen(true);
-    }, 60);
-  };
+  // Autofill on text selection (desktop + iOS) → open popup centered (optional auto-open)
+  useEffect(() => {
+    let timer: number | undefined;
 
-  document.addEventListener("mouseup", readSelection);       // desktop
-  document.addEventListener("selectionchange", readSelection); // iOS Safari
-  document.addEventListener("touchend", readSelection);        // WebView fallback
+    const readSelection = () => {
+      if (timer) window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        const selObj = document.getSelection?.();
+        const text = (selObj?.toString() || "").trim();
+        if (!text) return;
 
-  return () => {
-    if (timer) window.clearTimeout(timer);
-    document.removeEventListener("mouseup", readSelection);
-    document.removeEventListener("selectionchange", readSelection);
-    document.removeEventListener("touchend", readSelection);
-  };
-}, []);
+        const anchorEl = (selObj?.anchorNode as Node | null)?.parentElement ?? null;
+        if (anchorEl && anchorEl.closest(".fd-titlebar")) return;
+
+        // If you prefer auto-open on selection, uncomment:
+        // setDictQuery(text);
+        // setFloatOpen(true);
+      }, 60);
+    };
+
+    document.addEventListener("mouseup", readSelection);
+    document.addEventListener("selectionchange", readSelection);
+    document.addEventListener("touchend", readSelection);
+
+    return () => {
+      if (timer) window.clearTimeout(timer);
+      document.removeEventListener("mouseup", readSelection);
+      document.removeEventListener("selectionchange", readSelection);
+      document.removeEventListener("touchend", readSelection);
+    };
+  }, []);
 
   // load/save glossary
   useEffect(() => {
@@ -222,6 +253,20 @@ useEffect(() => {
       return [item, ...prev];
     });
   }
+
+  // build vocab list for local-first lookup
+  const vocabList =
+    (segment.vocab || []).map((v: any) => ({
+      word: v.word || v.headword || v.id || "",
+      headword: v.headword || v.word || "",
+      pos: v.pos || "",
+      ipa: v.ipa || "",
+      en: v.en || v.def_en || "",
+      ja: v.ja || "",
+      def_en: v.def_en || v.en || "",
+      example_en: v.example_en || "",
+      example_ja: v.example_ja || "",
+    })) || [];
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -364,23 +409,24 @@ useEffect(() => {
         </footer>
       </main>
 
+      {/* Floating quick-lookup button (shows only when text is selected) */}
+      {selectedText && (
+        <button
+          onClick={openDictFromSelection}
+          className="fixed right-4 bottom-24 z-[9999] px-4 py-2 rounded-full shadow-lg
+                     bg-[var(--nt-bg)] text-white text-sm"
+        >
+          📖 Look up selection
+        </button>
+      )}
+
       {/* --- Floating Dictionary Popup --- */}
       <FloatingDict
         open={floatOpen}
         onClose={() => setFloatOpen(false)}
         query={dictQuery}
         uiLang={lang}
-        vocabList={(segment.vocab || []).map((v: any) => ({
-          word: v.word || v.headword || v.id || "",
-          headword: v.headword || v.word || "",
-          pos: v.pos || "",
-          ipa: v.ipa || "",
-          en: v.en || v.def_en || "",
-          ja: v.ja || "",
-          def_en: v.def_en || v.en || "",
-          example_en: v.example_en || "",
-          example_ja: v.example_ja || "",
-        })) || []}
+        vocabList={vocabList}
         onSaveGlossary={handleSaveGlossary}
       />
     </div>
