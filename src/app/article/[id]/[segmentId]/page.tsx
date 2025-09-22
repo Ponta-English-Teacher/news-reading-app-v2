@@ -172,19 +172,36 @@ export default function ArticlePage({
     { term: string; def_en?: string; ja?: string; source: "json" | "openai" }[]
   >([]);
 
-  // Autofill on text selection → open popup (ignore selections inside the popup titlebar)
-  useEffect(() => {
-    function onMouseUp() {
-      const text = (window.getSelection?.()?.toString() || "").trim();
+// Autofill on text selection (desktop + iOS) → open popup centered
+useEffect(() => {
+  let timer: number | undefined;
+
+  const readSelection = () => {
+    if (timer) window.clearTimeout(timer);
+    timer = window.setTimeout(() => {
+      const selObj = document.getSelection?.();
+      const text = (selObj?.toString() || "").trim();
       if (!text) return;
-      const anchor = (window.getSelection?.()?.anchorNode as Node | null)?.parentElement;
-      if (anchor && anchor.closest(".fd-titlebar")) return;
+
+      const anchorEl = (selObj?.anchorNode as Node | null)?.parentElement ?? null;
+      if (anchorEl && anchorEl.closest(".fd-titlebar")) return;
+
       setDictQuery(text);
       setFloatOpen(true);
-    }
-    document.addEventListener("mouseup", onMouseUp);
-    return () => document.removeEventListener("mouseup", onMouseUp);
-  }, []);
+    }, 60);
+  };
+
+  document.addEventListener("mouseup", readSelection);       // desktop
+  document.addEventListener("selectionchange", readSelection); // iOS Safari
+  document.addEventListener("touchend", readSelection);        // WebView fallback
+
+  return () => {
+    if (timer) window.clearTimeout(timer);
+    document.removeEventListener("mouseup", readSelection);
+    document.removeEventListener("selectionchange", readSelection);
+    document.removeEventListener("touchend", readSelection);
+  };
+}, []);
 
   // load/save glossary
   useEffect(() => {
