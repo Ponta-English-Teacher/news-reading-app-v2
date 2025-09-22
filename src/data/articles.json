@@ -18,23 +18,19 @@
               "lead": "Here is a quick update from City Hall.",
               "summary": "The city is making new small parks.",
               "body": "Leaders want to change empty land into green parks. Families can rest there and children can play.",
-              "signoff": "You're watching News Today.",
-              "easy": {
-                "summary": "City makes small parks.",
-                "body": "Empty land → small parks with trees and benches."
-              }
+              "signoff": "You're watching News Today."
             },
             "ja": {
               "greeting": "こんにちは、News Today です。",
               "lead": "市役所からの短いお知らせです。",
               "summary": "市は新しい小さな公園を作っています。",
               "body": "市は空き地を緑のある公園に変えます。家族が休み、子どもが遊べます。",
-              "signoff": "News Today をご覧いただきありがとうございます。",
-              "easy": {
-                "summary": "市が小さい公園をつくる。",
-                "body": "あきち → 小さい公園。木やベンチがあります。",
-                "withFurigana": "市（し）は 空（あき）地（ち）を 公園（こうえん）に 変（か）えます。"
-              }
+              "signoff": "News Today をご覧いただきありがとうございます。"
+            },
+            "easy": {
+              "summary": "市が小さい公園をつくる。",
+              "body": "あきち → 小さい公園。木やベンチがあります。",
+              "withFurigana": "市（し）は 空（あき）地（ち）を 公園（こうえん）に 変（か）えます。"
             }
           },
           "HS": {
@@ -69,6 +65,67 @@
         "drills": [
           { "id": "d1", "lang": "en", "text": "Good evening, and thank you for watching News Today." },
           { "id": "d2", "lang": "ja", "text": "ご視聴ありがとうございます。News Today です。" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "2025-002",
+    "category": "National",
+    "source": "NHK-style simulated",
+    "publishedAt": "2025-09-23T07:00:00Z",
+    "segments": [
+      {
+        "id": "seg-1",
+        "kicker": "Morning Edition",
+        "headline_en": "Accident Caused by Driver’s Mistake",
+        "headline_ja": "運転ミスによる事故発生",
+        "variants": {
+          "JHS": {
+            "en": {
+              "greeting": "Good morning everyone. This is the morning edition of News Today. This is (your name).",
+              "lead": "A terrible accident occurred this morning.",
+              "summary": "According to the police, a driver mistakenly pressed the accelerator instead of the brake.",
+              "body": "Car makers are expected to produce cars that stop automatically if the accelerator is pressed suddenly. Many people hope the time will come when nobody dies from such accidents.",
+              "signoff": "Thank you for watching News Today!"
+            },
+            "ja": {
+              "greeting": "みなさん、おはようございます。「ニューストゥデイ、朝のニュースです。」",
+              "lead": "今朝、恐ろしい事故が発生しました。",
+              "summary": "警察によりますと、運転手がブレーキではなくアクセルを踏んでしまったようです。",
+              "body": "自動車メーカーには、急にアクセルが踏まれたときに自動的に止まる車を作ることが期待されています。こうした事故で誰も亡くならない時代が来ることを願います。",
+              "signoff": "ニューストゥデイをご覧いただき、ありがとうございました。"
+            },
+            "easy": {
+              "summary": "今朝、事故がありました。運転手がまちがえてアクセルを踏みました。車が自動で止まるようになることが大切です。",
+              "body": "事故で人が死なない時代が来ることを願います。"
+            }
+          },
+          "HS": {
+            "en": {
+              "greeting": "Good morning everyone. This is the morning edition of News Today. This is (your name).",
+              "lead": "A terrible accident occurred this morning.",
+              "summary": "Police say the driver mistakenly pressed the accelerator instead of the brake.",
+              "body": "Automakers are being urged to design cars that can automatically stop when the accelerator is pressed suddenly. The hope is that such technology will prevent deaths from these kinds of accidents.",
+              "signoff": "Thank you for watching News Today!"
+            },
+            "ja": {
+              "greeting": "みなさん、おはようございます。「ニューストゥデイ、朝のニュースです。」",
+              "lead": "今朝、重大な事故が発生しました。",
+              "summary": "警察によりますと、運転手がブレーキではなくアクセルを誤って踏んだとのことです。",
+              "body": "自動車メーカーには、急加速の際に自動停止する車の開発が求められています。こうした技術によって死亡事故を防ぐことが期待されています。",
+              "signoff": "ニューストゥデイをご覧いただき、ありがとうございました。"
+            },
+            "easy": {
+              "summary": "警察は、運転手がまちがえてアクセルを踏んだと発表しました。",
+              "body": "メーカーには、安全のために自動で止まる車を作ることが求められています。"
+            }
+          }
+        },
+        "vocab": [
+          { "id": "accelerator", "word": "accelerator", "ja": "アクセル", "en": "a pedal that makes the car go faster" },
+          { "id": "brake", "word": "brake", "ja": "ブレーキ", "en": "a pedal that makes the car stop" },
+          { "id": "automaker", "word": "automaker", "ja": "自動車メーカー", "en": "a company that makes cars" }
         ]
       }
     ]
