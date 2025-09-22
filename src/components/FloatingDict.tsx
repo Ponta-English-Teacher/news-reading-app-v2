@@ -48,7 +48,8 @@ export default function FloatingDict({
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [result, setResult] = useState<LookupResult | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlayingSel, setIsPlayingSel] = useState(false);
+  const [isPlayingDef, setIsPlayingDef] = useState(false);
 
   // position (start centered; then draggable)
   const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
@@ -63,13 +64,11 @@ export default function FloatingDict({
   // keep input in sync with new selections from the page
   useEffect(() => {
     setTerm(query || "");
-    // don’t auto-lookup; let user click "Look up"
   }, [query]);
 
   // when opened the first time, center it
   useEffect(() => {
     if (!open) return;
-    // if not positioned yet, put it center-ish
     if (!pos) {
       const top = Math.round(window.innerHeight * 0.18);
       const left = Math.round(window.innerWidth / 2);
@@ -120,7 +119,6 @@ export default function FloatingDict({
       vocabList.find(
         (v) => normalize(v.headword || "") === n || normalize(v.word || "") === n
       ) ||
-      // allow phrase contains exact headword
       vocabList.find((v) => n.split(/\s+/).includes(normalize(v.headword || "")));
 
     if (!best) return null;
@@ -180,24 +178,47 @@ export default function FloatingDict({
     }
   }
 
-  async function handlePlay() {
-    const q = (term || "").trim();
-    if (!q) return;
-    // prefer explanation in the UI language
+  // --- Play selected term (pronunciation check) ---
+  async function handlePlaySelection() {
     const toSpeak =
-      uiLang === "ja"
-        ? result?.ja || result?.def_en || q
-        : result?.def_en || result?.ja || q;
+      (term || "").trim() ||
+      (result?.term || "").trim() ||
+      (query || "").trim();
+
+    if (!toSpeak) return;
 
     try {
-      setIsPlaying(true);
+      setIsPlayingSel(true);
       const url = await speakText(toSpeak, uiLang);
       const audio = new Audio(url);
       audio.play();
-      audio.onended = () => setIsPlaying(false);
-      audio.onerror = () => setIsPlaying(false);
+      audio.onended = () => setIsPlayingSel(false);
+      audio.onerror = () => setIsPlayingSel(false);
     } catch {
-      setIsPlaying(false);
+      setIsPlayingSel(false);
+    }
+  }
+
+  // --- Play definition (pedagogical explanation) ---
+  async function handlePlayDefinition() {
+    // Prefer definition in UI language; fall back to the other, then to term
+    let toSpeak = "";
+    if (uiLang === "ja") {
+      toSpeak = (result?.ja || result?.def_en || term || query || "").trim();
+    } else {
+      toSpeak = (result?.def_en || result?.ja || term || query || "").trim();
+    }
+    if (!toSpeak) return;
+
+    try {
+      setIsPlayingDef(true);
+      const url = await speakText(toSpeak, uiLang);
+      const audio = new Audio(url);
+      audio.play();
+      audio.onended = () => setIsPlayingDef(false);
+      audio.onerror = () => setIsPlayingDef(false);
+    } catch {
+      setIsPlayingDef(false);
     }
   }
 
@@ -298,10 +319,25 @@ export default function FloatingDict({
                 </div>
               )}
 
-              <div className="flex items-center gap-2 pt-1">
-                <button className="btn-primary px-3 py-2" onClick={handlePlay} disabled={isPlaying}>
-                  {isPlaying ? "Playing…" : "▶︎ Play"}
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                <button
+                  className="btn-primary px-3 py-2"
+                  onClick={handlePlaySelection}
+                  disabled={isPlayingSel}
+                  title="Read the selected/typed text"
+                >
+                  {isPlayingSel ? "Playing…" : "🔊 Play Selection"}
                 </button>
+
+                <button
+                  className="btn px-3 py-2"
+                  onClick={handlePlayDefinition}
+                  disabled={isPlayingDef || (!result?.def_en && !result?.ja)}
+                  title="Read the definition"
+                >
+                  {isPlayingDef ? "Playing…" : "📖 Play Definition"}
+                </button>
+
                 <button className="btn px-3 py-2" onClick={handleSave} disabled={!result}>
                   + Save to Glossary
                 </button>
