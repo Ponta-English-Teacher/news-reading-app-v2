@@ -2,30 +2,82 @@
 
 import { useEffect, useRef, useState } from "react";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import data from "@/data/articles.json";
 import { speakText } from "@/utils/tts";
 import FloatingDict from "@/components/FloatingDict";
+
+// ---------- Types ----------
+type VariantBlock = {
+  greeting?: string;
+  lead?: string;
+  summary?: string;
+  body?: string;
+  signoff?: string;
+  easy?: {
+    summary?: string;
+    body?: string;
+    withFurigana?: string;
+  };
+};
+
+type Variants = {
+  JHS?: { en?: VariantBlock; ja?: VariantBlock };
+  HS?: { en?: VariantBlock; ja?: VariantBlock };
+};
+
+type Segment = {
+  id: string;
+  kicker?: string;
+  headline_en?: string;
+  headline_ja?: string;
+  variants?: Variants;
+  vocab?: Array<{
+    id?: string;
+    word?: string;
+    headword?: string;
+    pos?: string;
+    ipa?: string;
+    en?: string;
+    ja?: string;
+    def_en?: string;
+    example_en?: string;
+    example_ja?: string;
+  }>;
+  drills?: Array<{ id: string; lang: "en" | "ja"; text: string }>;
+};
+
+type Article = {
+  id: string;
+  title?: string;                  // optional, if provided we’ll show it
+  category?: string;
+  source?: string;
+  publishedAt?: string;
+  segments: Segment[];
+};
 
 export default function ArticlePage({
   params,
 }: {
   params: { id: string; segmentId: string };
 }) {
-  // ---data---
-  const articles = data as any[];
-  const article = articles.find((a) => a.id === params.id);
+  // ---------- Data ----------
+  const articles = data as unknown as Article[];
+  const article = articles.find((a) => String(a.id) === params.id);
   if (!article) return notFound();
-  const segment = article.segments.find((s: any) => s.id === params.segmentId);
+  const segment = article.segments.find((s) => String(s.id) === params.segmentId);
   if (!segment) return notFound();
 
-  // ---toggles---
+  // ---------- Toggles ----------
   const [level, setLevel] = useState<"JHS" | "HS">("JHS");
   const [lang, setLang] = useState<"en" | "ja">("en");
   const [showEasy, setShowEasy] = useState(true);
 
-  const variant = segment.variants?.[level]?.[lang];
+  const variant: VariantBlock | undefined = article
+    ? segment?.variants?.[level]?.[lang]
+    : undefined;
 
-  // ---Model TTS---
+  // ---------- Model TTS ----------
   const [isTtsLoading, setIsTtsLoading] = useState(false);
   const [ttsUrl, setTtsUrl] = useState<string | null>(null);
 
@@ -55,7 +107,7 @@ export default function ArticlePage({
     }
   }
 
-  // ---Recording (pause/resume, selection-safe)---
+  // ---------- Recording (pause/resume, selection-safe) ----------
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const recordedChunksRef = useRef<BlobPart[]>([]);
   const [isRecording, setIsRecording] = useState(false);
@@ -165,96 +217,12 @@ export default function ArticlePage({
     a.remove();
   }
 
-  // ---Dictionary (floating) + glossary---
+  // ---------- Floating dictionary (auto-open on selection) ----------
   const [floatOpen, setFloatOpen] = useState(false);
   const [dictQuery, setDictQuery] = useState("");
+  const lastDictTermRef = useRef<string>("");
 
-  const [glossary, setGlossary] = useState<
-    { term: string; def_en?: string; ja?: string; source: "json" | "openai" }[]
-  >([]);
-
-  // Track OS text selection (desktop + iOS)
-  const [selectedText, setSelectedText] = useState("");
-
-  useEffect(() => {
-    const update = () => {
-      const t = (document.getSelection?.()?.toString() || "").trim();
-      setSelectedText(t);
-    };
-    document.addEventListener("selectionchange", update);
-    document.addEventListener("touchend", update, { passive: true } as any);
-    document.addEventListener("mouseup", update);
-    return () => {
-      document.removeEventListener("selectionchange", update);
-      document.removeEventListener("touchend", update as any);
-      document.removeEventListener("mouseup", update);
-    };
-  }, []);
-
-  // Button handler: open dict with current selection
-  function openDictFromSelection() {
-    if (!selectedText) return;
-    setDictQuery(selectedText);
-    setFloatOpen(true);
-    try {
-      document.getSelection?.()?.removeAllRanges();
-    } catch {}
-    setSelectedText("");
-  }
-
-  // Autofill on text selection (desktop + iOS) → open popup centered (optional auto-open)
-  useEffect(() => {
-    let timer: number | undefined;
-
-    const readSelection = () => {
-      if (timer) window.clearTimeout(timer);
-      timer = window.setTimeout(() => {
-        const selObj = document.getSelection?.();
-        const text = (selObj?.toString() || "").trim();
-        if (!text) return;
-
-        const anchorEl = (selObj?.anchorNode as Node | null)?.parentElement ?? null;
-        if (anchorEl && anchorEl.closest(".fd-titlebar")) return;
-
-        // If you prefer auto-open on selection, uncomment:
-        // setDictQuery(text);
-        // setFloatOpen(true);
-      }, 60);
-    };
-
-    document.addEventListener("mouseup", readSelection);
-    document.addEventListener("selectionchange", readSelection);
-    document.addEventListener("touchend", readSelection);
-
-    return () => {
-      if (timer) window.clearTimeout(timer);
-      document.removeEventListener("mouseup", readSelection);
-      document.removeEventListener("selectionchange", readSelection);
-      document.removeEventListener("touchend", readSelection);
-    };
-  }, []);
-
-  // load/save glossary
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem("nt_glossary");
-      if (raw) setGlossary(JSON.parse(raw));
-    } catch {}
-  }, []);
-  useEffect(() => {
-    try {
-      localStorage.setItem("nt_glossary", JSON.stringify(glossary));
-    } catch {}
-  }, [glossary]);
-
-  function handleSaveGlossary(item: { term: string; def_en?: string; ja?: string; source: "json" | "openai" }) {
-    setGlossary((prev) => {
-      if (prev.some((p) => p.term === item.term)) return prev;
-      return [item, ...prev];
-    });
-  }
-
-  // build vocab list for local-first lookup
+  // collect vocab for local-first lookup
   const vocabList =
     (segment.vocab || []).map((v: any) => ({
       word: v.word || v.headword || v.id || "",
@@ -268,8 +236,66 @@ export default function ArticlePage({
       example_ja: v.example_ja || "",
     })) || [];
 
+  // auto-open when the user selects text, with a short debounce
+  useEffect(() => {
+    let timer: number | undefined;
+
+    const handler = () => {
+      if (timer) window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        const selObj = document.getSelection?.();
+        const raw = (selObj?.toString() || "").trim();
+        if (!raw) return;
+
+        // ignore too short or punctuation-only
+        if (raw.length < 2 || /^[\p{P}\p{S}]+$/u.test(raw)) return;
+
+        // ignore if selection starts on the popup titlebar (dragging)
+        const anchorEl = (selObj?.anchorNode as Node | null)?.parentElement ?? null;
+        if (anchorEl && anchorEl.closest(".fd-titlebar")) return;
+
+        // avoid re-querying the exact same term
+        if (lastDictTermRef.current === raw) return;
+
+        setDictQuery(raw);
+        setFloatOpen(true);
+        lastDictTermRef.current = raw;
+
+        // (optional) clear OS highlight to avoid accidental second opens
+        try {
+          selObj?.removeAllRanges();
+        } catch {}
+      }, 120);
+    };
+
+    document.addEventListener("mouseup", handler);
+    document.addEventListener("touchend", handler as any, { passive: true } as any);
+    document.addEventListener("selectionchange", handler);
+
+    return () => {
+      if (timer) window.clearTimeout(timer);
+      document.removeEventListener("mouseup", handler);
+      document.removeEventListener("touchend", handler as any);
+      document.removeEventListener("selectionchange", handler);
+    };
+  }, []);
+
+  // ---------- UI helpers ----------
+  function formattedDate() {
+    const d = article.publishedAt ? new Date(article.publishedAt) : new Date();
+    const f = new Intl.DateTimeFormat(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    return f.format(d);
+  }
+
   return (
     <div className="min-h-screen bg-gray-100">
+      {/* Header */}
       <header className="bg-[var(--nt-bg)] text-white">
         <div className="mx-auto max-w-4xl px-6">
           <div className="flex items-center justify-between py-4">
@@ -288,16 +314,33 @@ export default function ArticlePage({
       </header>
 
       <main className="page-wrap py-8 space-y-6">
-        {/* --- Article metadata card --- */}
+        {/* Back to Index */}
+        <div className="mx-auto max-w-4xl px-6">
+          <Link href="/" className="text-sm text-blue-600 hover:underline">
+            ← Back to Index
+          </Link>
+        </div>
+
+        {/* Article metadata */}
         <section className="news-frame p-6 space-y-4">
           <p className="text-xs text-gray-500 uppercase tracking-wider">
-            {segment.kicker || "News"} · {new Date(article.publishedAt).toLocaleString()}
+            {segment.kicker || "News"} · {formattedDate()}
           </p>
-          <h2 className="text-3xl font-extrabold leading-tight">{segment[`headline_${lang}`]}</h2>
+
+          {/* Prefer article.title, fallback to segment headline_en, then Article id */}
+          <h2 className="text-3xl font-extrabold leading-tight">
+            {article.title || segment.headline_en || `Article ${article.id}`}
+          </h2>
+
+          {/* Optional Japanese sub-headline */}
+          {segment.headline_ja && (
+            <h3 className="text-lg text-gray-700">{segment.headline_ja}</h3>
+          )}
+
           <p className="text-sm text-gray-600">Source: {article.source || "—"}</p>
         </section>
 
-        {/* --- Toggles --- */}
+        {/* Toggles */}
         <section className="card p-4 flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2">
             <label className="text-sm font-medium">Level</label>
@@ -340,25 +383,27 @@ export default function ArticlePage({
           </label>
         </section>
 
-        {/* --- Main article --- */}
+        {/* Main article */}
         <article className="card p-6 prose prose-news max-w-none select-text">
           {variant?.greeting && <p className="font-semibold">{variant.greeting}</p>}
           {variant?.lead && <p>{variant.lead}</p>}
           {variant?.summary && <p className="italic">{variant.summary}</p>}
-          {variant?.body && <p>{variant.body}</p>}
+          {variant?.body && <p className="whitespace-pre-wrap">{variant.body}</p>}
           {variant?.signoff && <p className="text-gray-700">{variant.signoff}</p>}
         </article>
 
-        {/* --- Easy version --- */}
+        {/* Easy version */}
         {showEasy && variant?.easy && (
           <section className="card p-4 border-l-4 border-l-blue-400 bg-blue-50">
-            <h3 className="text-lg font-semibold mb-2">Easy Version</h3>
+            <h3 className="text-base font-semibold mb-2">Easy Version</h3>
             {variant.easy.summary && <p className="mb-1 italic">{variant.easy.summary}</p>}
-            <div>{variant.easy.withFurigana || variant.easy.body}</div>
+            <div className="whitespace-pre-wrap">
+              {variant.easy.withFurigana || variant.easy.body}
+            </div>
           </section>
         )}
 
-        {/* --- Model Speech --- */}
+        {/* Model Speech */}
         <section className="card p-4 space-y-3">
           <h3 className="text-base font-semibold">Model Speech</h3>
           <button onClick={handlePlayModelSpeech} disabled={isTtsLoading} className="btn btn-primary px-4 py-2">
@@ -367,7 +412,7 @@ export default function ArticlePage({
           {ttsUrl && <audio controls src={ttsUrl} className="mt-2 w-full" />}
         </section>
 
-        {/* --- My Reading --- */}
+        {/* My Reading */}
         <section className="card p-4 space-y-3">
           <h3 className="text-base font-semibold">My Reading</h3>
           <div className="text-sm">Status: {isRecording ? (isPaused ? "Paused" : "Recording") : "Idle"}</div>
@@ -386,49 +431,65 @@ export default function ArticlePage({
           </div>
         </section>
 
-        {/* --- Glossary preview --- */}
-        <section className="card p-4 space-y-2">
-          <h3 className="text-base font-semibold">My Glossary ({glossary.length})</h3>
-          {glossary.length === 0 ? (
-            <div className="text-sm text-gray-600">No saved words yet.</div>
-          ) : (
-            <ul className="text-sm list-disc pl-5">
-              {glossary.map((g) => (
-                <li key={g.term}>
-                  <span className="font-medium">{g.term}</span>
-                  {g.def_en ? <> — <span className="text-gray-700">{g.def_en}</span></> : null}
-                  {g.ja ? <> （{g.ja}）</> : null}
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
+        {/* Glossary preview */}
+        <GlossaryPreview />
 
         <footer className="pt-2 text-center text-gray-600 text-sm">
           This app was made by Hitoshi Eguchi @ Hokusei Gakuen University
         </footer>
       </main>
 
-      {/* Floating quick-lookup button (shows only when text is selected) */}
-      {selectedText && (
-        <button
-          onClick={openDictFromSelection}
-          className="fixed right-4 bottom-24 z-[9999] px-4 py-2 rounded-full shadow-lg
-                     bg-[var(--nt-bg)] text-white text-sm"
-        >
-          📖 Look up selection
-        </button>
-      )}
-
-      {/* --- Floating Dictionary Popup --- */}
+      {/* Floating Dictionary */}
       <FloatingDict
         open={floatOpen}
         onClose={() => setFloatOpen(false)}
         query={dictQuery}
         uiLang={lang}
         vocabList={vocabList}
-        onSaveGlossary={handleSaveGlossary}
+        onSaveGlossary={(item) => {
+          try {
+            const raw = localStorage.getItem("nt_glossary");
+            const arr = raw ? (JSON.parse(raw) as any[]) : [];
+            if (!arr.some((g) => g.term === item.term)) {
+              const next = [item, ...arr];
+              localStorage.setItem("nt_glossary", JSON.stringify(next));
+            }
+          } catch {}
+        }}
       />
     </div>
+  );
+}
+
+// ---------- Small components ----------
+function GlossaryPreview() {
+  const [glossary, setGlossary] = useState<
+    { term: string; def_en?: string; ja?: string; source: "json" | "openai" }[]
+  >([]);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("nt_glossary");
+      if (raw) setGlossary(JSON.parse(raw));
+    } catch {}
+  }, []);
+
+  return (
+    <section className="card p-4 space-y-2">
+      <h3 className="text-base font-semibold">My Glossary ({glossary.length})</h3>
+      {glossary.length === 0 ? (
+        <div className="text-sm text-gray-600">No saved words yet.</div>
+      ) : (
+        <ul className="text-sm list-disc pl-5">
+          {glossary.map((g) => (
+            <li key={g.term}>
+              <span className="font-medium">{g.term}</span>
+              {g.def_en ? <> — <span className="text-gray-700">{g.def_en}</span></> : null}
+              {g.ja ? <> （{g.ja}）</> : null}
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
   );
 }

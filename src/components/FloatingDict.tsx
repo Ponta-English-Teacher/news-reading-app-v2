@@ -32,7 +32,12 @@ type Props = {
   query: string;
   uiLang: "en" | "ja";
   vocabList: Vocab[];
-  onSaveGlossary: (item: { term: string; def_en?: string; ja?: string; source: "json" | "openai" }) => void;
+  onSaveGlossary: (item: {
+    term: string;
+    def_en?: string;
+    ja?: string;
+    source: "json" | "openai";
+  }) => void;
 };
 
 export default function FloatingDict({
@@ -117,9 +122,12 @@ export default function FloatingDict({
     const n = normalize(q);
     let best: Vocab | undefined =
       vocabList.find(
-        (v) => normalize(v.headword || "") === n || normalize(v.word || "") === n
+        (v) =>
+          normalize(v.headword || "") === n || normalize(v.word || "") === n
       ) ||
-      vocabList.find((v) => n.split(/\s+/).includes(normalize(v.headword || "")));
+      vocabList.find((v) =>
+        n.split(/\s+/).includes(normalize(v.headword || ""))
+      );
 
     if (!best) return null;
 
@@ -137,11 +145,13 @@ export default function FloatingDict({
 
   // remote lookup via OpenAI utility endpoint
   async function lookupRemote(q: string): Promise<LookupResult> {
-    const res = await fetch(`/api/lookup?q=${encodeURIComponent(q)}&ui=${uiLang}`, {
-      method: "GET",
-    });
+    const res = await fetch(
+      `/api/lookup?q=${encodeURIComponent(q)}&ui=${uiLang}`,
+      { method: "GET" }
+    );
     if (!res.ok) {
-      const msg = (await res.json().catch(() => ({} as any)))?.error || "LOOKUP_FAILED";
+      const msg =
+        (await res.json().catch(() => ({} as any)))?.error || "LOOKUP_FAILED";
       throw new Error(msg);
     }
     const json = await res.json();
@@ -178,12 +188,43 @@ export default function FloatingDict({
     }
   }
 
+  // === NEW: Auto-lookup when the popup opens with a term ===
+  const lastLookedRef = useRef<string>("");
+
+  useEffect(() => {
+    if (!open) return;
+    const q = (term || "").trim();
+    // ignore too-short or punctuation-only selections
+    if (!q || q.length < 2 || /^[\p{P}\p{S}]+$/u.test(q)) return;
+    if (q === lastLookedRef.current) return;
+
+    let t = window.setTimeout(async () => {
+      try {
+        setErr(null);
+        setLoading(true);
+        const local = lookupLocal(q);
+        if (local) {
+          setResult(local);
+        } else {
+          const remote = await lookupRemote(q);
+          setResult(remote);
+        }
+        lastLookedRef.current = q;
+      } catch (e: any) {
+        setErr(e?.message || "Lookup failed");
+        setResult(null);
+      } finally {
+        setLoading(false);
+      }
+    }, 120);
+
+    return () => window.clearTimeout(t);
+  }, [open, term]); // <— runs when opened or selection text changes
+
   // --- Play selected term (pronunciation check) ---
   async function handlePlaySelection() {
     const toSpeak =
-      (term || "").trim() ||
-      (result?.term || "").trim() ||
-      (query || "").trim();
+      (term || "").trim() || (result?.term || "").trim() || "";
 
     if (!toSpeak) return;
 
@@ -204,9 +245,9 @@ export default function FloatingDict({
     // Prefer definition in UI language; fall back to the other, then to term
     let toSpeak = "";
     if (uiLang === "ja") {
-      toSpeak = (result?.ja || result?.def_en || term || query || "").trim();
+      toSpeak = (result?.ja || result?.def_en || term || "").trim();
     } else {
-      toSpeak = (result?.def_en || result?.ja || term || query || "").trim();
+      toSpeak = (result?.def_en || result?.ja || term || "").trim();
     }
     if (!toSpeak) return;
 
@@ -293,29 +334,40 @@ export default function FloatingDict({
           {result ? (
             <div className="mt-2 space-y-2">
               <div className="text-[13px] text-slate-500">
-                {result.source === "json" ? "Local vocab" : "OpenAI"} • {result.pos || "—"}{" "}
+                {result.source === "json" ? "Local vocab" : "OpenAI"} •{" "}
+                {result.pos || "—"}{" "}
                 {result.ipa && <span className="ml-2">{result.ipa}</span>}
               </div>
               {/* English definition */}
               {result.def_en && (
                 <div className="bg-slate-50 border rounded p-3">
-                  <div className="text-xs font-semibold text-slate-600 mb-1">EN</div>
+                  <div className="text-xs font-semibold text-slate-600 mb-1">
+                    EN
+                  </div>
                   <div className="text-sm">{result.def_en}</div>
                 </div>
               )}
               {/* Japanese gloss */}
               {result.ja && (
                 <div className="bg-slate-50 border rounded p-3">
-                  <div className="text-xs font-semibold text-slate-600 mb-1">JA</div>
+                  <div className="text-xs font-semibold text-slate-600 mb-1">
+                    JA
+                  </div>
                   <div className="text-sm">{result.ja}</div>
                 </div>
               )}
               {/* Examples */}
               {(result.exampleEn || result.exampleJa) && (
                 <div className="bg-white border rounded p-3">
-                  <div className="text-xs font-semibold text-slate-600 mb-1">Examples</div>
-                  {result.exampleEn && <div className="text-sm">EN: {result.exampleEn}</div>}
-                  {result.exampleJa && <div className="text-sm">JA: {result.exampleJa}</div>}
+                  <div className="text-xs font-semibold text-slate-600 mb-1">
+                    Examples
+                  </div>
+                  {result.exampleEn && (
+                    <div className="text-sm">EN: {result.exampleEn}</div>
+                  )}
+                  {result.exampleJa && (
+                    <div className="text-sm">JA: {result.exampleJa}</div>
+                  )}
                 </div>
               )}
 
@@ -344,7 +396,9 @@ export default function FloatingDict({
               </div>
             </div>
           ) : (
-            <div className="text-sm text-slate-500">Enter a term and press “Look up”.</div>
+            <div className="text-sm text-slate-500">
+              Enter a term and press “Look up”.
+            </div>
           )}
         </div>
       </div>
