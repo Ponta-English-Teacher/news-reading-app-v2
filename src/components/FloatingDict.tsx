@@ -29,15 +29,10 @@ type LookupResult = {
 type Props = {
   open: boolean;
   onClose: () => void;
-  query: string;
+  query: string; // prefilled from selection
   uiLang: "en" | "ja";
   vocabList: Vocab[];
-  onSaveGlossary: (item: {
-    term: string;
-    def_en?: string;
-    ja?: string;
-    source: "json" | "openai";
-  }) => void;
+  onSaveGlossary: (item: { term: string; def_en?: string; ja?: string; source: "json" | "openai" }) => void;
 };
 
 export default function FloatingDict({
@@ -48,7 +43,7 @@ export default function FloatingDict({
   vocabList,
   onSaveGlossary,
 }: Props) {
-  // --- UI state ---
+  // ---------- UI state ----------
   const [term, setTerm] = useState(query || "");
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -56,7 +51,7 @@ export default function FloatingDict({
   const [isPlayingSel, setIsPlayingSel] = useState(false);
   const [isPlayingDef, setIsPlayingDef] = useState(false);
 
-  // position (start centered; then draggable)
+  // position (start centered; draggable)
   const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
   const dragging = useRef<{
     startX: number;
@@ -66,12 +61,12 @@ export default function FloatingDict({
     active: boolean;
   } | null>(null);
 
-  // keep input in sync with new selections from the page
+  // Keep input synced with new selection from page
   useEffect(() => {
     setTerm(query || "");
   }, [query]);
 
-  // when opened the first time, center it
+  // Center on first open
   useEffect(() => {
     if (!open) return;
     if (!pos) {
@@ -81,7 +76,7 @@ export default function FloatingDict({
     }
   }, [open, pos]);
 
-  // drag handlers
+  // ---------- Drag handlers ----------
   function onDragStart(e: React.MouseEvent) {
     if (!pos) return;
     dragging.current = {
@@ -99,7 +94,7 @@ export default function FloatingDict({
     const dx = e.clientX - dragging.current.startX;
     const dy = e.clientY - dragging.current.startY;
     setPos({
-      top: dragging.current.startTop + dy,
+      top: Math.max(8, dragging.current.startTop + dy),
       left: dragging.current.startLeft + dx,
     });
   }
@@ -109,7 +104,7 @@ export default function FloatingDict({
     window.removeEventListener("mouseup", onDragEnd);
   }
 
-  // normalize text for matching
+  // ---------- Lookup helpers ----------
   function normalize(s: string) {
     return (s || "")
       .trim()
@@ -117,16 +112,15 @@ export default function FloatingDict({
       .replace(/[.,!?;:"“”‘’()［］\[\]{}…]/g, "");
   }
 
-  // local-first lookup from JSON vocab
   function lookupLocal(q: string): LookupResult | null {
     const n = normalize(q);
+    // Exact headword/word match; then partial (any word in phrase matches a headword)
     let best: Vocab | undefined =
       vocabList.find(
-        (v) =>
-          normalize(v.headword || "") === n || normalize(v.word || "") === n
+        (v) => normalize(v.headword || "") === n || normalize(v.word || "") === n
       ) ||
       vocabList.find((v) =>
-        n.split(/\s+/).includes(normalize(v.headword || ""))
+        n.split(/\s+/).includes(normalize(v.headword || "")),
       );
 
     if (!best) return null;
@@ -143,15 +137,10 @@ export default function FloatingDict({
     };
   }
 
-  // remote lookup via OpenAI utility endpoint
   async function lookupRemote(q: string): Promise<LookupResult> {
-    const res = await fetch(
-      `/api/lookup?q=${encodeURIComponent(q)}&ui=${uiLang}`,
-      { method: "GET" }
-    );
+    const res = await fetch(`/api/lookup?q=${encodeURIComponent(q)}&ui=${uiLang}`, { method: "GET" });
     if (!res.ok) {
-      const msg =
-        (await res.json().catch(() => ({} as any)))?.error || "LOOKUP_FAILED";
+      const msg = (await res.json().catch(() => ({} as any)))?.error || "LOOKUP_FAILED";
       throw new Error(msg);
     }
     const json = await res.json();
@@ -163,7 +152,7 @@ export default function FloatingDict({
       ja: json.ja || "",
       exampleEn: json.exampleEn || "",
       exampleJa: json.exampleJa || "",
-      source: json.source || "openai",
+      source: (json.source as "json" | "openai") || "openai",
     };
   }
 
@@ -173,6 +162,7 @@ export default function FloatingDict({
     setErr(null);
     setLoading(true);
     try {
+      // local-first, then OpenAI
       const local = lookupLocal(q);
       if (local) {
         setResult(local);
@@ -188,44 +178,12 @@ export default function FloatingDict({
     }
   }
 
-  // === NEW: Auto-lookup when the popup opens with a term ===
-  const lastLookedRef = useRef<string>("");
-
-  useEffect(() => {
-    if (!open) return;
-    const q = (term || "").trim();
-    // ignore too-short or punctuation-only selections
-    if (!q || q.length < 2 || /^[\p{P}\p{S}]+$/u.test(q)) return;
-    if (q === lastLookedRef.current) return;
-
-    let t = window.setTimeout(async () => {
-      try {
-        setErr(null);
-        setLoading(true);
-        const local = lookupLocal(q);
-        if (local) {
-          setResult(local);
-        } else {
-          const remote = await lookupRemote(q);
-          setResult(remote);
-        }
-        lastLookedRef.current = q;
-      } catch (e: any) {
-        setErr(e?.message || "Lookup failed");
-        setResult(null);
-      } finally {
-        setLoading(false);
-      }
-    }, 120);
-
-    return () => window.clearTimeout(t);
-  }, [open, term]); // <— runs when opened or selection text changes
-
-  // --- Play selected term (pronunciation check) ---
+  // ---------- TTS ----------
   async function handlePlaySelection() {
     const toSpeak =
-      (term || "").trim() || (result?.term || "").trim() || "";
-
+      (term || "").trim() ||
+      (result?.term || "").trim() ||
+      (query || "").trim();
     if (!toSpeak) return;
 
     try {
@@ -240,14 +198,13 @@ export default function FloatingDict({
     }
   }
 
-  // --- Play definition (pedagogical explanation) ---
   async function handlePlayDefinition() {
     // Prefer definition in UI language; fall back to the other, then to term
     let toSpeak = "";
     if (uiLang === "ja") {
-      toSpeak = (result?.ja || result?.def_en || term || "").trim();
+      toSpeak = (result?.ja || result?.def_en || term || query || "").trim();
     } else {
-      toSpeak = (result?.def_en || result?.ja || term || "").trim();
+      toSpeak = (result?.def_en || result?.ja || term || query || "").trim();
     }
     if (!toSpeak) return;
 
@@ -277,13 +234,23 @@ export default function FloatingDict({
 
   return (
     <div className="fixed inset-0 z-[60] pointer-events-none">
+      {/* Outer window */}
       <div
-        className="pointer-events-auto shadow-2xl ring-1 ring-black/10 bg-white rounded-xl w-[min(92vw,680px)]"
+        className="pointer-events-auto shadow-2xl ring-1 ring-black/10 bg-white rounded-xl"
         style={{
           position: "absolute",
-          top: pos ? pos.top : "18vh",
-          left: pos ? pos.left : "50%",
-          transform: pos ? "translate(-50%, 0)" : "translate(-50%, 0)",
+          top: pos ? pos.top : 120,
+          left: pos ? pos.left : window.innerWidth / 2,
+          transform: "translate(-50%, 0)",
+          // Flexible width that can stretch, with a sane max
+          width: "min(96vw, 900px)",
+          maxHeight: "80vh",
+          // Allow manual horizontal resize
+          resize: "horizontal",
+          overflow: "hidden",
+          // Keep header, body, footer laid out vertically
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         {/* Title bar (draggable) */}
@@ -303,12 +270,12 @@ export default function FloatingDict({
           </button>
         </div>
 
-        {/* Body */}
-        <div className="p-4 space-y-3">
+        {/* Body (scrollable) */}
+        <div className="p-4 space-y-3 overflow-y-auto" style={{ flex: 1, minHeight: 0 }}>
           <div className="flex gap-2">
             <input
               className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
-              placeholder="Type or paste a word/phrase…"
+              placeholder="Type or paste a word / phrase / sentence…"
               value={term}
               onChange={(e) => setTerm(e.target.value)}
               onKeyDown={(e) => {
@@ -334,72 +301,63 @@ export default function FloatingDict({
           {result ? (
             <div className="mt-2 space-y-2">
               <div className="text-[13px] text-slate-500">
-                {result.source === "json" ? "Local vocab" : "OpenAI"} •{" "}
-                {result.pos || "—"}{" "}
+                {result.source === "json" ? "Local vocab" : "OpenAI"} • {result.pos || "—"}{" "}
                 {result.ipa && <span className="ml-2">{result.ipa}</span>}
               </div>
+
               {/* English definition */}
               {result.def_en && (
                 <div className="bg-slate-50 border rounded p-3">
-                  <div className="text-xs font-semibold text-slate-600 mb-1">
-                    EN
-                  </div>
-                  <div className="text-sm">{result.def_en}</div>
+                  <div className="text-xs font-semibold text-slate-600 mb-1">EN</div>
+                  <div className="text-sm leading-6">{result.def_en}</div>
                 </div>
               )}
               {/* Japanese gloss */}
               {result.ja && (
                 <div className="bg-slate-50 border rounded p-3">
-                  <div className="text-xs font-semibold text-slate-600 mb-1">
-                    JA
-                  </div>
-                  <div className="text-sm">{result.ja}</div>
+                  <div className="text-xs font-semibold text-slate-600 mb-1">JA</div>
+                  <div className="text-sm leading-6">{result.ja}</div>
                 </div>
               )}
               {/* Examples */}
               {(result.exampleEn || result.exampleJa) && (
                 <div className="bg-white border rounded p-3">
-                  <div className="text-xs font-semibold text-slate-600 mb-1">
-                    Examples
-                  </div>
-                  {result.exampleEn && (
-                    <div className="text-sm">EN: {result.exampleEn}</div>
-                  )}
-                  {result.exampleJa && (
-                    <div className="text-sm">JA: {result.exampleJa}</div>
-                  )}
+                  <div className="text-xs font-semibold text-slate-600 mb-1">Examples</div>
+                  {result.exampleEn && <div className="text-sm leading-6">EN: {result.exampleEn}</div>}
+                  {result.exampleJa && <div className="text-sm leading-6">JA: {result.exampleJa}</div>}
                 </div>
               )}
-
-              <div className="flex flex-wrap items-center gap-2 pt-1">
-                <button
-                  className="btn-primary px-3 py-2"
-                  onClick={handlePlaySelection}
-                  disabled={isPlayingSel}
-                  title="Read the selected/typed text"
-                >
-                  {isPlayingSel ? "Playing…" : "🔊 Play Selection"}
-                </button>
-
-                <button
-                  className="btn px-3 py-2"
-                  onClick={handlePlayDefinition}
-                  disabled={isPlayingDef || (!result?.def_en && !result?.ja)}
-                  title="Read the definition"
-                >
-                  {isPlayingDef ? "Playing…" : "📖 Play Definition"}
-                </button>
-
-                <button className="btn px-3 py-2" onClick={handleSave} disabled={!result}>
-                  + Save to Glossary
-                </button>
-              </div>
             </div>
           ) : (
-            <div className="text-sm text-slate-500">
-              Enter a term and press “Look up”.
-            </div>
+            <div className="text-sm text-slate-500">Enter a term and press “Look up”.</div>
           )}
+        </div>
+
+        {/* Footer: actions (always visible) */}
+        <div className="px-4 py-3 border-t bg-white rounded-b-xl">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              className="btn-primary px-3 py-2"
+              onClick={handlePlaySelection}
+              disabled={isPlayingSel}
+              title="Read the selected/typed text"
+            >
+              {isPlayingSel ? "Playing…" : "🔊 Play Selection"}
+            </button>
+
+            <button
+              className="btn px-3 py-2"
+              onClick={handlePlayDefinition}
+              disabled={isPlayingDef || (!result?.def_en && !result?.ja)}
+              title="Read the definition"
+            >
+              {isPlayingDef ? "Playing…" : "📖 Play Definition"}
+            </button>
+
+            <button className="btn px-3 py-2" onClick={handleSave} disabled={!result}>
+              + Save to Glossary
+            </button>
+          </div>
         </div>
       </div>
     </div>

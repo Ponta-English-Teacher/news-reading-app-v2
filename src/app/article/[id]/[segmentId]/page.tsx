@@ -7,25 +7,19 @@ import data from "@/data/articles.json";
 import { speakText } from "@/utils/tts";
 import FloatingDict from "@/components/FloatingDict";
 
-// ---------- Types ----------
+/* ---------- Types ---------- */
 type VariantBlock = {
   greeting?: string;
   lead?: string;
   summary?: string;
   body?: string;
   signoff?: string;
-  easy?: {
-    summary?: string;
-    body?: string;
-    withFurigana?: string;
-  };
+  easy?: { summary?: string; body?: string; withFurigana?: string };
 };
-
 type Variants = {
   JHS?: { en?: VariantBlock; ja?: VariantBlock };
   HS?: { en?: VariantBlock; ja?: VariantBlock };
 };
-
 type Segment = {
   id: string;
   kicker?: string;
@@ -46,10 +40,9 @@ type Segment = {
   }>;
   drills?: Array<{ id: string; lang: "en" | "ja"; text: string }>;
 };
-
 type Article = {
   id: string;
-  title?: string;                  // optional, if provided we’ll show it
+  title?: string;
   category?: string;
   source?: string;
   publishedAt?: string;
@@ -61,23 +54,21 @@ export default function ArticlePage({
 }: {
   params: { id: string; segmentId: string };
 }) {
-  // ---------- Data ----------
+  /* ---------- Data ---------- */
   const articles = data as unknown as Article[];
   const article = articles.find((a) => String(a.id) === params.id);
   if (!article) return notFound();
   const segment = article.segments.find((s) => String(s.id) === params.segmentId);
   if (!segment) return notFound();
 
-  // ---------- Toggles ----------
+  /* ---------- Toggles ---------- */
   const [level, setLevel] = useState<"JHS" | "HS">("JHS");
   const [lang, setLang] = useState<"en" | "ja">("en");
   const [showEasy, setShowEasy] = useState(true);
 
-  const variant: VariantBlock | undefined = article
-    ? segment?.variants?.[level]?.[lang]
-    : undefined;
+  const variant: VariantBlock | undefined = segment?.variants?.[level]?.[lang];
 
-  // ---------- Model TTS ----------
+  /* ---------- Model TTS ---------- */
   const [isTtsLoading, setIsTtsLoading] = useState(false);
   const [ttsUrl, setTtsUrl] = useState<string | null>(null);
 
@@ -107,7 +98,7 @@ export default function ArticlePage({
     }
   }
 
-  // ---------- Recording (pause/resume, selection-safe) ----------
+  /* ---------- Recording (pause/resume) ---------- */
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const recordedChunksRef = useRef<BlobPart[]>([]);
   const [isRecording, setIsRecording] = useState(false);
@@ -163,7 +154,6 @@ export default function ArticlePage({
       alert("Microphone not available. Please allow mic permission.");
     }
   }
-
   function pauseRecording() {
     clearSelection();
     const mr = mediaRecorderRef.current;
@@ -175,7 +165,6 @@ export default function ArticlePage({
       console.error(e);
     }
   }
-
   function resumeRecording() {
     clearSelection();
     const mr = mediaRecorderRef.current;
@@ -187,7 +176,6 @@ export default function ArticlePage({
       console.error(e);
     }
   }
-
   function stopRecording() {
     clearSelection();
     const mr = mediaRecorderRef.current;
@@ -197,13 +185,11 @@ export default function ArticlePage({
       setIsPaused(false);
     }
   }
-
   function playMyRecording() {
     clearSelection();
     if (!myUrl) return;
     new Audio(myUrl).play();
   }
-
   function downloadMyRecording() {
     clearSelection();
     if (!myUrl) return;
@@ -217,12 +203,50 @@ export default function ArticlePage({
     a.remove();
   }
 
-  // ---------- Floating dictionary (auto-open on selection) ----------
+  /* ---------- Dictionary (MANUAL ONLY) ---------- */
   const [floatOpen, setFloatOpen] = useState(false);
   const [dictQuery, setDictQuery] = useState("");
-  const lastDictTermRef = useRef<string>("");
 
-  // collect vocab for local-first lookup
+  // Track current selection for the button; DO NOT auto-open
+  const [selectedText, setSelectedText] = useState("");
+  useEffect(() => {
+    const readSelection = () => {
+      const t = (document.getSelection?.()?.toString() || "").trim();
+      setSelectedText(t);
+    };
+    document.addEventListener("selectionchange", readSelection);
+    document.addEventListener("mouseup", readSelection);
+    document.addEventListener("touchend", readSelection, { passive: true } as any);
+    return () => {
+      document.removeEventListener("selectionchange", readSelection);
+      document.removeEventListener("mouseup", readSelection);
+      document.removeEventListener("touchend", readSelection as any);
+    };
+  }, []);
+
+  function openDictFromSelection() {
+    const txt = (selectedText || "").trim();
+    if (!txt) return;
+    setDictQuery(txt);
+    setFloatOpen(true);
+    try { document.getSelection?.()?.removeAllRanges(); } catch {}
+  }
+
+  // Keyboard shortcut: ⌘/Ctrl + D
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const isMac = navigator.platform.toLowerCase().includes("mac");
+      const mod = isMac ? e.metaKey : e.ctrlKey;
+      if (mod && (e.key === "d" || e.key === "D")) {
+        e.preventDefault();
+        if (selectedText.trim()) openDictFromSelection();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [selectedText]);
+
+  // vocab list passed into FloatingDict
   const vocabList =
     (segment.vocab || []).map((v: any) => ({
       word: v.word || v.headword || v.id || "",
@@ -236,51 +260,30 @@ export default function ArticlePage({
       example_ja: v.example_ja || "",
     })) || [];
 
-  // auto-open when the user selects text, with a short debounce
+  /* ---------- Glossary (localStorage) ---------- */
+  const [glossary, setGlossary] = useState<
+    { term: string; def_en?: string; ja?: string; source: "json" | "openai" }[]
+  >([]);
   useEffect(() => {
-    let timer: number | undefined;
-
-    const handler = () => {
-      if (timer) window.clearTimeout(timer);
-      timer = window.setTimeout(() => {
-        const selObj = document.getSelection?.();
-        const raw = (selObj?.toString() || "").trim();
-        if (!raw) return;
-
-        // ignore too short or punctuation-only
-        if (raw.length < 2 || /^[\p{P}\p{S}]+$/u.test(raw)) return;
-
-        // ignore if selection starts on the popup titlebar (dragging)
-        const anchorEl = (selObj?.anchorNode as Node | null)?.parentElement ?? null;
-        if (anchorEl && anchorEl.closest(".fd-titlebar")) return;
-
-        // avoid re-querying the exact same term
-        if (lastDictTermRef.current === raw) return;
-
-        setDictQuery(raw);
-        setFloatOpen(true);
-        lastDictTermRef.current = raw;
-
-        // (optional) clear OS highlight to avoid accidental second opens
-        try {
-          selObj?.removeAllRanges();
-        } catch {}
-      }, 120);
-    };
-
-    document.addEventListener("mouseup", handler);
-    document.addEventListener("touchend", handler as any, { passive: true } as any);
-    document.addEventListener("selectionchange", handler);
-
-    return () => {
-      if (timer) window.clearTimeout(timer);
-      document.removeEventListener("mouseup", handler);
-      document.removeEventListener("touchend", handler as any);
-      document.removeEventListener("selectionchange", handler);
-    };
+    try {
+      const raw = localStorage.getItem("nt_glossary");
+      if (raw) setGlossary(JSON.parse(raw));
+    } catch {}
   }, []);
+  useEffect(() => {
+    try {
+      localStorage.setItem("nt_glossary", JSON.stringify(glossary));
+    } catch {}
+  }, [glossary]);
 
-  // ---------- UI helpers ----------
+  function handleSaveGlossary(item: { term: string; def_en?: string; ja?: string; source: "json" | "openai" }) {
+    setGlossary((prev) => (prev.some((p) => p.term === item.term) ? prev : [item, ...prev]));
+  }
+
+  /* ---------- UI helpers ---------- */
+  const displayTitle =
+    article.title || segment.headline_en || segment.headline_ja || `Article ${article.id}`;
+
   function formattedDate() {
     const d = article.publishedAt ? new Date(article.publishedAt) : new Date();
     const f = new Intl.DateTimeFormat(undefined, {
@@ -293,6 +296,7 @@ export default function ArticlePage({
     return f.format(d);
   }
 
+  /* ---------- Render ---------- */
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
@@ -313,6 +317,7 @@ export default function ArticlePage({
         </div>
       </header>
 
+      {/* Main */}
       <main className="page-wrap py-8 space-y-6">
         {/* Back to Index */}
         <div className="mx-auto max-w-4xl px-6">
@@ -326,17 +331,12 @@ export default function ArticlePage({
           <p className="text-xs text-gray-500 uppercase tracking-wider">
             {segment.kicker || "News"} · {formattedDate()}
           </p>
-
-          {/* Prefer article.title, fallback to segment headline_en, then Article id */}
           <h2 className="text-3xl font-extrabold leading-tight">
-            {article.title || segment.headline_en || `Article ${article.id}`}
+            {displayTitle}
           </h2>
-
-          {/* Optional Japanese sub-headline */}
           {segment.headline_ja && (
             <h3 className="text-lg text-gray-700">{segment.headline_ja}</h3>
           )}
-
           <p className="text-sm text-gray-600">Source: {article.source || "—"}</p>
         </section>
 
@@ -347,10 +347,7 @@ export default function ArticlePage({
             <select
               className="rounded-md border px-2 py-1 bg-white"
               value={level}
-              onChange={(e) => {
-                clearSelection();
-                setLevel(e.target.value as "JHS" | "HS");
-              }}
+              onChange={(e) => { clearSelection(); setLevel(e.target.value as "JHS" | "HS"); }}
             >
               <option value="JHS">Junior High</option>
               <option value="HS">High School</option>
@@ -361,10 +358,7 @@ export default function ArticlePage({
             <select
               className="rounded-md border px-2 py-1 bg-white"
               value={lang}
-              onChange={(e) => {
-                clearSelection();
-                setLang(e.target.value as "en" | "ja");
-              }}
+              onChange={(e) => { clearSelection(); setLang(e.target.value as "en" | "ja"); }}
             >
               <option value="en">English</option>
               <option value="ja">日本語</option>
@@ -374,10 +368,7 @@ export default function ArticlePage({
             <input
               type="checkbox"
               checked={showEasy}
-              onChange={(e) => {
-                clearSelection();
-                setShowEasy(e.target.checked);
-              }}
+              onChange={(e) => { clearSelection(); setShowEasy(e.target.checked); }}
             />
             Easy Mode
           </label>
@@ -416,7 +407,6 @@ export default function ArticlePage({
         <section className="card p-4 space-y-3">
           <h3 className="text-base font-semibold">My Reading</h3>
           <div className="text-sm">Status: {isRecording ? (isPaused ? "Paused" : "Recording") : "Idle"}</div>
-
           <div className="flex flex-wrap gap-2">
             <button onClick={startRecording} disabled={isRecording} className="btn">🎙️ Record</button>
             <button onClick={pauseRecording} disabled={!isRecording || isPaused} className="btn">⏸️ Pause</button>
@@ -425,7 +415,6 @@ export default function ArticlePage({
             <button onClick={playMyRecording} disabled={!myUrl} className="btn">🔊 Play</button>
             <button onClick={downloadMyRecording} disabled={!myUrl} className="btn">⬇️ Download</button>
           </div>
-
           <div className="text-sm mt-2 space-y-1">
             {durationSec != null && <div>Duration: {durationSec.toFixed(1)} sec</div>}
           </div>
@@ -439,6 +428,18 @@ export default function ArticlePage({
         </footer>
       </main>
 
+      {/* Floating quick-lookup button (appears only when there IS a selection) */}
+      {selectedText && selectedText.length >= 2 && (
+        <button
+          onClick={openDictFromSelection}
+          className="fixed right-4 bottom-24 z-[9999] px-4 py-2 rounded-full shadow-lg
+                     bg-[var(--nt-bg)] text-white text-sm"
+          title="Open dictionary with your current selection (⌘/Ctrl + D)"
+        >
+          📖 Look up selection
+        </button>
+      )}
+
       {/* Floating Dictionary */}
       <FloatingDict
         open={floatOpen}
@@ -446,22 +447,20 @@ export default function ArticlePage({
         query={dictQuery}
         uiLang={lang}
         vocabList={vocabList}
-        onSaveGlossary={(item) => {
-          try {
-            const raw = localStorage.getItem("nt_glossary");
-            const arr = raw ? (JSON.parse(raw) as any[]) : [];
-            if (!arr.some((g) => g.term === item.term)) {
-              const next = [item, ...arr];
-              localStorage.setItem("nt_glossary", JSON.stringify(next));
-            }
-          } catch {}
-        }}
+        onSaveGlossary={(item) =>
+          handleSaveGlossary({
+            term: item.term,
+            def_en: item.def_en,
+            ja: item.ja,
+            source: item.source,
+          })
+        }
       />
     </div>
   );
 }
 
-// ---------- Small components ----------
+/* ---------- Small components ---------- */
 function GlossaryPreview() {
   const [glossary, setGlossary] = useState<
     { term: string; def_en?: string; ja?: string; source: "json" | "openai" }[]
