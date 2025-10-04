@@ -210,5 +210,90 @@
         ]
       }
     ]
+  },
+  {
+  "id": "2025-004",
+  "category": "Culture",
+  "source": "Generated",
+  "publishedAt": "2025-10-04T09:00:00Z",
+  "segments": [
+    {
+      "id": "seg-1",
+      "type": "SHORT_UPDATE",
+      "kicker": "Culture Note",
+      "headline_en": "Manga Connects People Around the World",
+      "headline_ja": "マンガが世界の人々をつなぐ",
+      "variants": {
+        "JHS": {
+          "en": {
+            "greeting": "Hello and welcome to News Today.",
+            "lead": "Here is a cultural story from Japan.",
+            "summary": "Japanese comics have become a bridge between Japan and the world.",
+            "body": "Many young people start learning Japanese because they love manga. Old titles like Doraemon and Slam Dunk are still popular, and new ones such as One Piece, Naruto, and Demon Slayer attract fans worldwide.",
+            "signoff": "You're watching News Today."
+          },
+          "ja": {
+            "greeting": "こんにちは、News Today です。",
+            "lead": "日本の文化に関するニュースです。",
+            "summary": "日本のマンガは、日本と世界をつなぐ架け橋（かけはし）になっています。",
+            "body": "多くの若者がマンガを好きになって日本語を学び始めます。「ドラえもん」や「スラムダンク」などの古い作品も人気があり、「ワンピース」「ナルト」「鬼滅の刃」などの新しい作品も世界中のファンをひきつけています。",
+            "signoff": "News Today をご覧いただきありがとうございます。"
+          }
+        },
+        "HS": {
+          "en": {
+            "greeting": "Good evening, this is News Today.",
+            "lead": "A short report on Japan’s global pop culture influence.",
+            "summary": "Japanese comics, or manga, are connecting generations and cultures across the world.",
+            "body": "Once seen only as entertainment, manga have become a cultural bridge that inspires people to learn Japanese. Classic series like Doraemon, Astro Boy, and Slam Dunk remain beloved, while new hits such as One Piece, Naruto, Demon Slayer, Attack on Titan, and Jujutsu Kaisen continue to gain worldwide fans. The mix of old and new shows manga’s lasting power.",
+            "signoff": "Thank you for watching News Today."
+          },
+          "ja": {
+            "greeting": "こんばんは、News Today です。",
+            "lead": "日本のポップカルチャーの世界的な影響についての短いニュースです。",
+            "summary": "日本のマンガは、世代や文化を越えて世界の人々をつなげています。",
+            "body": "かつては娯楽と見られていたマンガが、いまでは日本語学習のきっかけとなる文化の架け橋になっています。「ドラえもん」「鉄腕アトム」「スラムダンク」などの古い作品は今も愛され、「ワンピース」「ナルト」「鬼滅の刃」「進撃の巨人」「呪術廻戦」などの新しい作品も世界中で人気です。古い作品と新しい作品の両方が、マンガの力を示しています。",
+            "signoff": "ご視聴ありがとうございました。"
+          }
+        }
+      },
+      "vocab": [
+        {
+          "id": "w1",
+          "headword": "bridge",
+          "pos": "noun",
+          "ipa": "/brɪdʒ/",
+          "def_en": "something that connects people or ideas",
+          "ja": "架け橋（かけはし）・つなぐもの",
+          "example_en": "Manga has become a cultural bridge between Japan and the world.",
+          "example_ja": "マンガは日本と世界をつなぐ文化の架け橋になっています。"
+        },
+        {
+          "id": "w2",
+          "headword": "classic",
+          "pos": "noun",
+          "ipa": "/ˈklæsɪk/",
+          "def_en": "a work of art that is famous and admired for a long time",
+          "ja": "古典的な作品・名作",
+          "example_en": "Slam Dunk is a basketball classic loved by many readers.",
+          "example_ja": "『スラムダンク』は多くの読者に愛されるバスケットボールの名作です。"
+        },
+        {
+          "id": "w3",
+          "headword": "inspire",
+          "pos": "verb",
+          "ipa": "/ɪnˈspaɪə(r)/",
+          "def_en": "to make someone want to do something creative or positive",
+          "ja": "刺激する・やる気を起こさせる",
+          "example_en": "Manga inspires many people to study Japanese.",
+          "example_ja": "マンガは多くの人に日本語を学ぶきっかけを与えています。"
+        }
+      ],
+      "drills": [
+        { "id": "d1", "lang": "en", "text": "Manga has become a cultural bridge between Japan and the world." },
+        { "id": "d2", "lang": "ja", "text": "マンガは日本と世界をつなぐ文化の架け橋になっています。" }
+      ]
+    }
+  ]
   }
 ]
