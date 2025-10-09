@@ -295,5 +295,110 @@
       ]
     }
   ]
-  }
+},
+  {
+  "id": "2025-005",
+  "category": "World",
+  "source": "Generated",
+  "publishedAt": "2025-10-09T09:00:00Z",
+  "segments": [
+    {
+      "id": "seg-1",
+      "type": "SHORT_UPDATE",
+      "kicker": "World Focus",
+      "headline_en": "Japan’s New Leader Reminds Us to Learn About the World",
+      "headline_ja": "日本の新しいリーダー、世界を学ぶ大切さを思い出させる",
+      "variants": {
+        "JHS": {
+          "en": {
+            "greeting": "Hello and welcome to News Today.",
+            "lead": "Japan has a new leader of the LDP, and she may be the next Prime Minister.",
+            "summary": "It is good news for Japan, and it is also a chance to think about other countries.",
+            "body": "Do you know who the Prime Minister of Canada is? What is its capital city? Who are some famous singers or movie stars there? We often know little about other countries. Learning about the world helps us understand Japan and ourselves better.",
+            "signoff": "You're watching News Today.",
+            "easy": {
+              "summary": "Japan has a new leader. Let’s learn about other countries too.",
+              "body": "Who is Canada’s Prime Minister? What is its capital city? Learning about the world helps us know Japan better."
+            }
+          },
+          "ja": {
+            "greeting": "こんにちは、News Today です。",
+            "lead": "日本では自民党の新しいリーダーがえらばれました。その人は次の首相になるかもしれません。",
+            "summary": "日本にとってうれしいニュースですが、同時に、ほかの国について考えるチャンスでもあります。",
+            "body": "カナダの首相はだれですか？首都はどこですか？どんな有名な歌手や映画スターがいますか？わたしたちは、ほかの国のことをあまり知りません。でも、世界のことを学ぶと、日本や自分のこともよくわかります。",
+            "signoff": "News Today をご覧いただきありがとうございます。",
+            "easy": {
+              "summary": "日本に新しいリーダー。ほかの国のことも学びましょう。",
+              "body": "カナダの首相はだれ？首都はどこ？世界を学ぶと日本のこともわかります。",
+              "withFurigana": "日本（にほん）では 自民党（じみんとう）の 新（あたら）しい リーダーが えらばれました。 カナダの 首相（しゅしょう）は だれですか？ 首都（しゅと）は どこですか？ 世界（せかい）を 学（まな）ぶと 日本（にほん）のことも よく わかります。"
+            }
+          }
+        },
+        "HS": {
+          "en": {
+            "greeting": "Good evening, this is News Today.",
+            "lead": "Japan has chosen a new leader for the Liberal Democratic Party, who is expected to become the next Prime Minister.",
+            "summary": "Many people are watching how she will guide Japan’s future, but this news also reminds us to look beyond our own country.",
+            "body": "When we hear about Japan’s new leader, we can also ask ourselves what we know about other nations. For example, who is the Prime Minister of Canada? What is its capital city? Who are famous singers or movie stars there? Knowing leaders, artists, and places from around the world helps us understand global society better. Learning about other countries is a step toward understanding ourselves.",
+            "signoff": "Thank you for watching News Today."
+          },
+          "ja": {
+            "greeting": "こんばんは、News Today です。",
+            "lead": "日本は新しい自民党のリーダーを選びました。その人は次の首相になると見られています。",
+            "summary": "多くの人がこのリーダーが日本の未来をどのように導くかに注目していますが、このニュースは同時に、私たちに「自分の国の外を見ること」の大切さを思い出させます。",
+            "body": "日本の新しいリーダーについて聞くとき、他の国について私たちはどれくらい知っているのかも考えてみましょう。たとえば、カナダの首相は誰でしょうか？首都はどこでしょう？どんな有名な歌手や映画スターがいるでしょうか？世界のリーダーや文化を知ることは、国際社会を理解する第一歩です。他の国を知ることは、自分たちを知ることにもつながります。",
+            "signoff": "ご視聴ありがとうございました。"
+          }
+        }
+      },
+      "vocab": [
+        {
+          "id": "w1",
+          "headword": "leader",
+          "pos": "noun",
+          "ipa": "/ˈliːdə(r)/",
+          "def_en": "a person who guides or controls a group or country",
+          "ja": "指導者・リーダー",
+          "example_en": "Japan has a new political leader.",
+          "example_ja": "日本には新しい政治のリーダーがいます。"
+        },
+        {
+          "id": "w2",
+          "headword": "remind",
+          "pos": "verb",
+          "ipa": "/rɪˈmaɪnd/",
+          "def_en": "to make someone remember something important",
+          "ja": "思い出させる",
+          "example_en": "This news reminds us to learn about other countries.",
+          "example_ja": "このニュースは私たちに他の国を学ぶことの大切さを思い出させます。"
+        },
+        {
+          "id": "w3",
+          "headword": "capital",
+          "pos": "noun",
+          "ipa": "/ˈkæpɪtl/",
+          "def_en": "the city where a country’s government is located",
+          "ja": "首都",
+          "example_en": "Ottawa is the capital of Canada.",
+          "example_ja": "オタワはカナダの首都です。"
+        },
+        {
+          "id": "w4",
+          "headword": "society",
+          "pos": "noun",
+          "ipa": "/səˈsaɪəti/",
+          "def_en": "people living together in an organized community",
+          "ja": "社会",
+          "example_en": "Learning about other countries helps us understand global society.",
+          "example_ja": "他の国を学ぶことは世界の社会を理解する助けになります。"
+        }
+      ],
+      "drills": [
+        { "id": "d1", "lang": "en", "text": "Japan has a new leader of the LDP." },
+        { "id": "d2", "lang": "ja", "text": "日本では自民党の新しいリーダーがえらばれました。" }
+      ]
+    }
+  ]
+}
+
 ]
