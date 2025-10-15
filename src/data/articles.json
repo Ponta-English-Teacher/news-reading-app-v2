@@ -399,6 +399,106 @@
       ]
     }
   ]
+},
+{
+  "id": "2025-006",
+  "category": "Culture",
+  "source": "Generated",
+  "publishedAt": "2025-10-15T04:00:00Z",
+  "segments": [
+    {
+      "id": "seg-1",
+      "type": "SHORT_UPDATE",
+      "kicker": "Culture Note",
+      "headline_en": "Punctual and Polite: Comparing Japan and Canada",
+      "headline_ja": "時間に正確で礼儀正しい：日本とカナダの国民性",
+      "variants": {
+        "JHS": {
+          "en": {
+            "greeting": "Hello and welcome to News Today.",
+            "lead": "Japanese people are known for being on time and waiting quietly in line.",
+            "summary": "Even when something bad happens, people stay calm and help each other.",
+            "body": "In Japan, trains come on time, and people don’t push or shout when they line up. After the big earthquake in 2011, many people worked together and stayed peaceful. In Canada, people are known for being kind and polite. They often say “sorry,” and they respect people from different countries and cultures. Both Japan and Canada are known for good manners and caring for others.",
+            "signoff": "You're watching News Today.",
+            "easy": {
+              "summary": "Japan: on time, quiet lines. Canada: kind and polite.",
+              "body": "Japan—trains on time; people stay calm. Canada—people say “sorry” and respect diversity.",
+              "withFurigana": "日本（にほん）では 電車（でんしゃ）が 時間（じかん）どおりに 来（き）ます。人（ひと）は 静（しず）かに 列（れつ）に 並（なら）びます。カナダの人（ひと）は 親切（しんせつ）で 礼儀正（れいぎただ）しい と 知（し）られて います。"
+            }
+          },
+          "ja": {
+            "greeting": "こんにちは、News Today です。",
+            "lead": "日本人は時間をまもり、静かに列にならぶことで知られています。",
+            "summary": "大変なときでも、人々は落ち着いて助け合います。",
+            "body": "日本では電車が時間どおりに来て、ならぶときに押したり大声を出したりしません。2011年の大きな地しんのときも、みんなが助け合い、しずかに行動しました。カナダでは、人々はやさしくてていねいです。小さなことでも「ごめんなさい」と言い、いろいろな文化の人をそんけいします。日本もカナダも、れいぎ正しさと思いやりで知られています。",
+            "signoff": "News Today をご覧いただきありがとうございます。"
+          }
+        },
+        "HS": {
+          "en": {
+            "greeting": "Good evening, this is News Today.",
+            "lead": "Japanese people are often praised for being punctual and orderly—traits seen as part of the nation’s character.",
+            "summary": "Trains run on time, people queue quietly, and even during disasters society stays calm and cooperative.",
+            "body": "Japan’s punctuality and orderliness are admired around the world. After the 2011 Great East Japan Earthquake, many were moved by how people helped each other and remained peaceful in hardship. In Canada, people are known for being polite, friendly, and respectful of diversity. Canadians often say “sorry,” even for small things, and value kindness toward others. Both countries show that good manners and respect can be part of national identity, though they appear in different ways.",
+            "signoff": "Thank you for watching News Today."
+          },
+          "ja": {
+            "greeting": "こんばんは、News Today です。",
+            "lead": "日本人は時間に正確で秩序（ちつじょ）を重んじることで高く評価されています。これらは国民性の一部と見なされています。",
+            "summary": "電車は時間どおりに走り、人々は静かに列に並び、災害時でも落ち着いて協力します。",
+            "body": "日本の時間の正確さと秩序ある行動は世界で称賛されています。2011年の東日本大震災では、人々が助け合い、困難の中でも冷静さを保った姿が注目されました。カナダでは、礼儀正しさ、親しみやすさ、多様性への敬意がよく知られています。小さなことでも「ごめんなさい」と言い、他者への思いやりを大切にします。日本とカナダはいずれも、礼儀と思いやりが国の特徴になり得ることを示していますが、その表れ方には違いがあります。",
+            "signoff": "ご視聴ありがとうございました。"
+          }
+        }
+      },
+      "vocab": [
+        {
+          "id": "w1",
+          "headword": "punctual",
+          "pos": "adjective",
+          "ipa": "/ˈpʌŋktʃuəl/",
+          "def_en": "arriving or happening at the expected time",
+          "ja": "時間に正確な",
+          "example_en": "Japanese trains are famously punctual.",
+          "example_ja": "日本の電車は時間に正確なことで有名です。"
+        },
+        {
+          "id": "w2",
+          "headword": "orderly",
+          "pos": "adjective",
+          "ipa": "/ˈɔːdəli/",
+          "def_en": "behaving in a calm and organized way",
+          "ja": "秩序正しい",
+          "example_en": "People formed an orderly queue at the station.",
+          "example_ja": "人々は駅で秩序正しく列に並びました。"
+        },
+        {
+          "id": "w3",
+          "headword": "polite",
+          "pos": "adjective",
+          "ipa": "/pəˈlaɪt/",
+          "def_en": "having good manners and showing respect to others",
+          "ja": "礼儀正しい",
+          "example_en": "Canadians are known for being polite.",
+          "example_ja": "カナダの人々は礼儀正しいことで知られています。"
+        },
+        {
+          "id": "w4",
+          "headword": "diversity",
+          "pos": "noun",
+          "ipa": "/daɪˈvɜːsəti/",
+          "def_en": "a range of different people or things existing together",
+          "ja": "多様性",
+          "example_en": "Canada values cultural diversity.",
+          "example_ja": "カナダは文化的多様性を大切にしています。"
+        }
+      ],
+      "drills": [
+        { "id": "d1", "lang": "en", "text": "Japanese trains are famously punctual." },
+        { "id": "d2", "lang": "ja", "text": "日本の電車は時間に正確なことで有名です。" }
+      ]
+    }
+  ]
 }
 
 ]
