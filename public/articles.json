@@ -499,6 +499,101 @@
       ]
     }
   ]
+},
+{
+  "id": "2025-007",
+  "category": "Culture",
+  "source": "Generated",
+  "publishedAt": "2025-10-23T09:00:00Z",
+  "segments": [
+    {
+      "id": "seg-1",
+      "type": "SHORT_UPDATE",
+      "kicker": "Culture Note",
+      "headline_en": "Different Ways to Show Respect: English and Japanese",
+      "headline_ja": "英語と日本語の「ていねいさ」はどうちがう？",
+      "variants": {
+        "JHS": {
+          "en": {
+            "greeting": "Hello and welcome to News Today.",
+            "lead": "People often say English has no honorific forms, but Japanese does.",
+            "summary": "In Japanese, we use special words to show respect. English also has polite ways of speaking.",
+            "body": "In Japanese, we change our words to show respect — like desu, masu, and keigo. English is different, but of course, it also has polite and respectful ways of speaking. For example, “What the hell are you doing?” sounds rude, but “Will you tell me what you are trying to do?” sounds polite. Both English and Japanese show respect in their own ways.",
+            "signoff": "You're watching News Today."
+          },
+          "ja": {
+            "greeting": "こんにちは、News Today です。",
+            "lead": "英語には「けいご」がなくて、日本語にはある、とよく言われます。",
+            "summary": "日本語では、特別な言葉を使ってそんけいをあらわします。英語にも、もちろんていねいに話す方法があります。",
+            "body": "日本語では「です・ます」や「けいご」を使って相手をそんけいします。英語にももちろん、ていねいに話す・けいいをあらわす表現があります。たとえば、「What the hell are you doing?（何やってんだよ）」は失礼ですが、「Will you tell me what you are trying to do?（今、何なさろうとされているんですか）」はていねいです。英語も日本語も、それぞれの方法でそんけいをあらわしています。",
+            "signoff": "News Today をご覧いただきありがとうございます。"
+          }
+        },
+        "HS": {
+          "en": {
+            "greeting": "Good evening, this is News Today.",
+            "lead": "Many people say Japanese is difficult because it has honorific forms, while English does not.",
+            "summary": "Both languages have ways to express respect, though in different forms.",
+            "body": "In Japanese, speakers use desu, masu, and keigo to show respect. English may seem simpler, but of course, it also has ways to express politeness and respect. For example, “What the hell are you doing?” sounds rough, while “Will you tell me what you are trying to do?” is much more polite. Both languages express respect — one through grammar, the other through tone and choice of words.",
+            "signoff": "Thank you for watching News Today."
+          },
+          "ja": {
+            "greeting": "こんばんは、News Today です。",
+            "lead": "日本語には「けいご」があるのに、英語にはないと言われます。",
+            "summary": "どちらの言語にも、ちがう形でそんけいをあらわす方法があります。",
+            "body": "日本語では「です・ます」や「けいご」でそんけいをあらわします。英語は一見シンプルですが、もちろん、ていねいに話す・けいいをしめす方法があります。たとえば、「What the hell are you doing?（何やってんだよ）」はぶっきらぼうですが、「Will you tell me what you are trying to do?（今、何なさろうとされているんですか）」はていねいです。どちらの言語も、ちがう形でそんけいを大切にしています。",
+            "signoff": "ご視聴ありがとうございました。"
+          }
+        }
+      },
+      "vocab": [
+        {
+          "id": "w1",
+          "headword": "honorific",
+          "pos": "adjective/noun",
+          "ipa": "/ˌɒnəˈrɪfɪk/",
+          "def_en": "showing respect in language",
+          "ja": "敬語・尊敬をあらわす",
+          "example_en": "Japanese has many honorific forms to show respect.",
+          "example_ja": "日本語には敬語の表現が多くあります。"
+        },
+        {
+          "id": "w2",
+          "headword": "polite",
+          "pos": "adjective",
+          "ipa": "/pəˈlaɪt/",
+          "def_en": "having good manners and respect",
+          "ja": "礼儀正しい",
+          "example_en": "It’s important to be polite when you talk to others.",
+          "example_ja": "人と話すときは礼儀正しくすることが大切です。"
+        },
+        {
+          "id": "w3",
+          "headword": "tone",
+          "pos": "noun",
+          "ipa": "/təʊn/",
+          "def_en": "the way of speaking that shows feeling or respect",
+          "ja": "話し方のトーン",
+          "example_en": "Her tone of voice was very polite.",
+          "example_ja": "彼女の話し方のトーンはとてもていねいでした。"
+        },
+        {
+          "id": "w4",
+          "headword": "slang",
+          "pos": "noun",
+          "ipa": "/slæŋ/",
+          "def_en": "informal words used by certain groups",
+          "ja": "スラング・くだけた言葉",
+          "example_en": "He avoided slang when talking to his teacher.",
+          "example_ja": "彼は先生と話すときスラングを使いませんでした。"
+        }
+      ],
+      "drills": [
+        { "id": "d1", "lang": "en", "text": "Will you tell me what you are trying to do? sounds polite." },
+        { "id": "d2", "lang": "ja", "text": "「Will you tell me what you are trying to do?」はていねいです。" }
+      ]
+    }
+  ]
 }
 
 ]
