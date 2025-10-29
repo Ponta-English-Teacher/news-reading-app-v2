@@ -594,6 +594,106 @@
       ]
     }
   ]
+},
+{
+  "id": "2025-008",
+  "category": "World",
+  "source": "Generated",
+  "publishedAt": "2025-10-29T06:00:00Z",
+  "segments": [
+    {
+      "id": "seg-1",
+      "type": "SHORT_UPDATE",
+      "kicker": "World Focus",
+      "headline_en": "Canada vs Japan: People, Land, and Density",
+      "headline_ja": "カナダと日本：人口・国土・人口密度をくらべる",
+      "variants": {
+        "JHS": {
+          "en": {
+            "greeting": "Hello and welcome to News Today.",
+            "lead": "Today’s topic is numbers: population, land, and density.",
+            "summary": "Japan has about three times more people than Canada, but Canada’s land is about 24 times bigger.",
+            "body": "About 42 million people live in Canada, and about 123 million live in Japan. Canada is very large—around nine million square kilometers. Japan is about 378 thousand. So Canada is much bigger, but fewer people live there. Density shows how many people live in one square kilometer: Canada has around 4 people, and Japan has about 338. That means Japan is about 80 times denser than Canada.",
+            "signoff": "You're watching News Today.",
+            "easy": {
+              "summary": "Japan: more people. Canada: much bigger land.",
+              "body": "Density: Canada ≈ 4 people/km², Japan ≈ 338 people/km² → Japan is ~80× denser.",
+              "withFurigana": "人（ひと）口（く）みつど＝1平方（へいほう）キロに 何（なん）人（にん） 住（す）むか。"
+            }
+          },
+          "ja": {
+            "greeting": "こんにちは、News Today です。",
+            "lead": "きょうのテーマは数字です。人口・国土・人口密度を見てみましょう。",
+            "summary": "日本の人口はカナダの約3倍ですが、国土はカナダのほうが約24倍広いです。",
+            "body": "カナダの人口は約4,200万人、日本は約1億2,300万人です。国土はカナダが約900万平方キロメートル、日本は約38万平方キロメートル。人口密度（1平方キロあたりの人数）は、カナダが約4人、日本は約338人です。つまり、日本の人口密度はカナダの約80倍になります。",
+            "signoff": "News Today をご覧いただきありがとうございます。"
+          }
+        },
+        "HS": {
+          "en": {
+            "greeting": "Good evening, this is News Today.",
+            "lead": "Let’s compare Canada and Japan using population, land area, and density.",
+            "summary": "Japan’s population is ~3× Canada’s, but Canada’s land area is ~24× Japan’s—so density differs by ~80×.",
+            "body": "Canada’s population is about 42.5 million, while Japan has about 123 million. Canada’s land area is roughly nine million km²; Japan’s is about 378 thousand km². This size gap makes density very different: Canada ≈ 4.2 people/km² versus Japan ≈ 338 people/km². In short, more people live on much less land in Japan, producing far higher density.",
+            "signoff": "Thank you for watching News Today."
+          },
+          "ja": {
+            "greeting": "こんばんは、News Today です。",
+            "lead": "人口・国土・人口密度でカナダと日本を比較します。",
+            "summary": "日本の人口はカナダの約3倍、国土はカナダが日本の約24倍で、人口密度は約80倍の差になります。",
+            "body": "カナダの人口は約4,250万人、日本は約1億2,300万人。国土はカナダが約900万平方キロメートル、日本は約38万平方キロメートルです。結果として人口密度は、カナダが約4.2人/㎢、日本が約338人/㎢となり、大きな差が生まれます。限られた土地に多くの人が住む日本と、広大な土地に比較的少ない人口のカナダで、生活環境は大きく異なります。",
+            "signoff": "ご視聴ありがとうございました。"
+          }
+        }
+      },
+      "vocab": [
+        {
+          "id": "w1",
+          "headword": "population",
+          "pos": "noun",
+          "ipa": "/ˌpɒpjuˈleɪʃn/",
+          "def_en": "the number of people living in a place",
+          "ja": "人口",
+          "example_en": "Japan’s population is about 123 million.",
+          "example_ja": "日本の人口は約1億2,300万人です。"
+        },
+        {
+          "id": "w2",
+          "headword": "density",
+          "pos": "noun",
+          "ipa": "/ˈdensəti/",
+          "def_en": "how many people live in one unit of area",
+          "ja": "人口密度",
+          "example_en": "Tokyo has a very high population density.",
+          "example_ja": "東京は人口密度がとても高いです。"
+        },
+        {
+          "id": "w3",
+          "headword": "square kilometer",
+          "pos": "noun",
+          "ipa": "/ˈskweə kɪˈlɒmɪtə(r)/",
+          "def_en": "a unit of area equal to a square that is one kilometer on each side",
+          "ja": "平方キロメートル",
+          "example_en": "Japan’s land area is about 378 thousand square kilometers.",
+          "example_ja": "日本の国土は約38万平方キロメートルです。"
+        },
+        {
+          "id": "w4",
+          "headword": "compare",
+          "pos": "verb",
+          "ipa": "/kəmˈpeə(r)/",
+          "def_en": "to look at two or more things to see how they are different or similar",
+          "ja": "比べる",
+          "example_en": "We compared Canada and Japan using density.",
+          "example_ja": "人口密度を使ってカナダと日本を比べました。"
+        }
+      ],
+      "drills": [
+        { "id": "d1", "lang": "en", "text": "Japan’s density is about 80 times higher than Canada’s." },
+        { "id": "d2", "lang": "ja", "text": "日本の人口密度はカナダの約80倍です。" }
+      ]
+    }
+  ]
 }
 
 ]
