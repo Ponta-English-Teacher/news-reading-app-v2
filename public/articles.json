@@ -694,6 +694,92 @@
       ]
     }
   ]
+},
+{
+  "id": "2025-009",
+  "category": "World",
+  "source": "Generated",
+  "publishedAt": "2025-10-24T09:00:00Z",
+  "segments": [
+    {
+      "id": "seg-1",
+      "type": "SHORT_UPDATE",
+      "kicker": "Education Trend",
+      "headline_en": "Changing Study Abroad Destinations: From the U.S. to Canada and Australia",
+      "headline_ja": "変わる留学先：アメリカからカナダ・オーストラリアへ",
+      "variants": {
+        "JHS": {
+          "en": {
+            "greeting": "Hello and welcome to News Today.",
+            "lead": "Where do Japanese students go to study English?",
+            "summary": "In 2000, most students went to the U.S. or the U.K. Today, many go to Canada or Australia.",
+            "body": "In 2000, about 32,000 students studied in the United States and 12,000 in the United Kingdom. In 2025, more students choose Canada (28,000) and Australia (24,000). These countries are safer and sometimes cheaper. Many also go to South Korea or the Philippines, where English is used in schools. Recently, the weak yen makes long study abroad difficult, so many young people join working holiday programs to study and work at the same time.\n\n| Year | Country | Students |\n|------|----------|-----------|\n| 2000 | United States | 32,000 |\n| 2000 | United Kingdom | 12,000 |\n| 2025 | Canada | 28,000 |\n| 2025 | Australia | 24,000 |\n| 2025 | Philippines | 6,000 |",
+            "signoff": "You're watching News Today."
+          },
+          "ja": {
+            "greeting": "こんにちは、News Today です。",
+            "lead": "日本の学生はどこの国に英語を学びに行くのでしょうか？",
+            "summary": "2000年はアメリカやイギリスが人気でしたが、今はカナダやオーストラリアが人気です。",
+            "body": "2000年には、約3万2000人がアメリカへ、約1万2000人がイギリスへ留学しました。2025年には、カナダ（2万8000人）やオーストラリア（2万4000人）を選ぶ学生が増えています。これらの国は安全で、費用もやや安いといわれます。また、韓国やフィリピンのように英語が使われるアジアの国に行く人もいます。最近では円安の影響で長期留学が難しくなり、勉強とアルバイトを両立できるワーキングホリデーが人気になっています。\n\n| 年 | 国 | 学生数 |\n|----|----|---------|\n| 2000 | アメリカ | 32,000 |\n| 2000 | イギリス | 12,000 |\n| 2025 | カナダ | 28,000 |\n| 2025 | オーストラリア | 24,000 |\n| 2025 | フィリピン | 6,000 |",
+            "signoff": "News Today をご覧いただきありがとうございます。"
+          }
+        },
+        "HS": {
+          "en": {
+            "greeting": "Good evening, this is News Today.",
+            "lead": "Study abroad patterns among Japanese students have changed in the past 25 years.",
+            "summary": "Fewer go to the U.S. or U.K., while more choose Canada and Australia for English study.",
+            "body": "In the year 2000, around 32,000 Japanese students studied in the United States and 12,000 in the United Kingdom. By 2025, Canada (28,000) and Australia (24,000) have become the top destinations. These countries still use English but are seen as safer, more welcoming, and more affordable.\n\nMore students also study in Asian countries such as South Korea (8,000) and the Philippines (6,000), where English programs are expanding. In recent years, the working holiday system has become one of the most popular ways for young Japanese to go abroad. Because of the weak yen, many students prefer short stays that combine language study and part-time work.\n\n| Year | Country | Students (approx.) |\n|------|----------|--------------------|\n| 2000 | United States | 32,000 |\n| 2000 | United Kingdom | 12,000 |\n| 2025 | Canada | 28,000 |\n| 2025 | Australia | 24,000 |\n| 2025 | South Korea | 8,000 |\n| 2025 | Philippines | 6,000 |",
+            "signoff": "Thank you for watching News Today."
+          },
+          "ja": {
+            "greeting": "こんばんは、News Today です。",
+            "lead": "日本人留学生の行き先はこの25年で大きく変わりました。",
+            "summary": "アメリカやイギリスに行く人は減り、カナダやオーストラリアを選ぶ人が増えています。",
+            "body": "2000年には、約3万2000人がアメリカ、約1万2000人がイギリスに留学しました。2025年には、カナダ（2万8000人）とオーストラリア（2万4000人）が人気の留学先になっています。これらの国々は英語を使う国でありながら、安全で多文化的、そして費用が比較的安いとされています。\n\nまた、韓国（8000人）やフィリピン（6000人）など、英語教育が盛んなアジアの国に行く学生も増えています。最近では円安の影響で、勉強とアルバイトを両立できるワーキングホリデーが特に人気です。\n\n| 年 | 国 | 学生数（約） |\n|----|----|----------------|\n| 2000 | アメリカ | 32,000 |\n| 2000 | イギリス | 12,000 |\n| 2025 | カナダ | 28,000 |\n| 2025 | オーストラリア | 24,000 |\n| 2025 | 韓国 | 8,000 |\n| 2025 | フィリピン | 6,000 |",
+            "signoff": "ご視聴ありがとうございました。"
+          }
+        }
+      },
+      "vocab": [
+        {
+          "id": "w1",
+          "headword": "destination",
+          "pos": "noun",
+          "ipa": "/ˌdɛstɪˈneɪʃən/",
+          "def_en": "a place where someone is going or plans to go",
+          "ja": "行き先・目的地",
+          "example_en": "Canada is now a popular study abroad destination.",
+          "example_ja": "カナダは今、人気のある留学先です。"
+        },
+        {
+          "id": "w2",
+          "headword": "affordable",
+          "pos": "adjective",
+          "ipa": "/əˈfɔːdəbl/",
+          "def_en": "not too expensive",
+          "ja": "手ごろな・お金がかからない",
+          "example_en": "Australia is known for its affordable English programs.",
+          "example_ja": "オーストラリアは手ごろな英語プログラムで知られています。"
+        },
+        {
+          "id": "w3",
+          "headword": "working holiday",
+          "pos": "noun",
+          "ipa": "/ˈwɜːkɪŋ ˈhɒlədeɪ/",
+          "def_en": "a program that allows people to work while traveling abroad",
+          "ja": "ワーキングホリデー（海外で働きながら滞在する制度）",
+          "example_en": "Many students go on a working holiday to study and work abroad.",
+          "example_ja": "多くの学生が勉強と仕事を両立するためにワーキングホリデーに参加します。"
+        }
+      ],
+      "drills": [
+        { "id": "d1", "lang": "en", "text": "Canada and Australia are now the top study abroad destinations for Japanese students." },
+        { "id": "d2", "lang": "ja", "text": "今、日本の学生に最も人気のある留学先はカナダとオーストラリアです。" }
+      ]
+    }
+  ]
 }
+
 
 ]
