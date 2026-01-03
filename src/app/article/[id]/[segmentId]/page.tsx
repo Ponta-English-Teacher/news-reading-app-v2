@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { notFound } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import Link from "next/link";
 import data from "@/data/articles.json";
 import { speakText } from "@/utils/tts";
@@ -49,16 +49,14 @@ type Article = {
   segments: Segment[];
 };
 
-export default function ArticlePage({
-  params,
-}: {
-  params: { id: string; segmentId: string };
-}) {
+export default function ArticlePage() {
+  const params = useParams<{ id: string; segmentId: string }>();
+  
   /* ---------- Data ---------- */
   const articles = data as unknown as Article[];
-  const article = articles.find((a) => String(a.id) === params.id);
+  const article = articles.find((a) => String(a.id) === String(params?.id));
   if (!article) return notFound();
-  const segment = article.segments.find((s) => String(s.id) === params.segmentId);
+  const segment = article?.segments.find((s) => String(s.id) === String(params?.segmentId));
   if (!segment) return notFound();
 
   /* ---------- Toggles ---------- */
@@ -329,7 +327,7 @@ export default function ArticlePage({
         {/* Article metadata */}
         <section className="news-frame p-6 space-y-4">
           <p className="text-xs text-gray-500 uppercase tracking-wider">
-            {segment.kicker || "News"} · {formattedDate()}
+            {segment.kicker || "News"} · <span suppressHydrationWarning>{formattedDate()}</span>
           </p>
           <h2 className="text-3xl font-extrabold leading-tight">
             {displayTitle}
