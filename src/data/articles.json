@@ -779,7 +779,77 @@
       ]
     }
   ]
+},
+{
+  "id": "2025-012",
+  "category": "Education",
+  "source": "Generated",
+  "publishedAt": "2025-11-05T09:00:00Z",
+  "segments": [
+    {
+      "id": "seg-1",
+      "type": "SHORT_UPDATE",
+      "kicker": "Education Focus",
+      "headline_en": "Preparing for Graduation Research",
+      "headline_ja": "卒業研究に向けた準備",
+      "variants": {
+        "HS": {
+          "en": {
+            "greeting": "Good evening, this is News Today.",
+            "lead": "This class helps students prepare for their graduation thesis over the next two semesters.",
+            "summary": "Students develop research skills through discussion, presentation, and academic writing.",
+            "body": "In the first semester, students learn how to explore academic topics and turn their interests into clear research questions. They read materials, organize ideas, and discuss them with classmates. Through these discussions, students deepen their thinking and learn to see topics from different perspectives. They also give short presentations to explain their ideas and receive feedback.\n\nIn the second semester, students focus on preparing for their graduation thesis, which they will write in their fourth year. They practice academic writing and learn basic rules such as structure, style, and citation. Research topics may include linguistics, culture, communication, or related fields, and the final thesis is expected to be about 20 pages. This class builds a foundation for independent research in the final year.",
+            "signoff": "Thank you for watching News Today."
+          },
+          "ja": {
+            "greeting": "こんばんは、News Today です。",
+            "lead": "この授業は、2学期にわたって卒業論文の準備を行うことを目的としています。",
+            "summary": "話し合い・発表・論文執筆を通して研究力を身につけます。",
+            "body": "前期では、学生は学術的なテーマを探し、自分の関心を明確な研究課題へと発展させる方法を学びます。資料を読み、考えを整理し、クラスメートと議論することで、多角的に物事を考える力を養います。また、自分の考えを短い発表としてまとめ、フィードバックを受けます。\n\n後期では、4年次に執筆する卒業論文に向けた準備を本格的に行います。論文の構成、文体、引用方法など、学術的な文章の基本ルールを学びます。研究テーマは言語学、文化、コミュニケーションなど幅広く、卒業論文はおよそ20ページが求められます。この授業は、最終学年での自立した研究の土台となります。",
+            "signoff": "ご視聴ありがとうございました。"
+          }
+        },
+        "JHS": {
+          "en": {
+            "greeting": "Hello and welcome to News Today.",
+            "lead": "This class helps students get ready for graduation research.",
+            "summary": "Students talk, present ideas, and learn how to write academic papers.",
+            "body": "In the first semester, students learn how to choose a research topic and make a clear question. They read materials, organize ideas, and talk with classmates. Students also give short presentations to share their ideas and learn from others.\n\nIn the second semester, students practice writing an academic paper. Topics include language, culture, and communication. The graduation thesis is about 20 pages long. This class prepares students for writing their thesis in the fourth year.",
+            "signoff": "You're watching News Today."
+          },
+          "ja": {
+            "greeting": "こんにちは、News Today です。",
+            "lead": "この授業は卒業研究の準備をするためのものです。",
+            "summary": "話し合いと発表、論文の書き方を学びます。",
+            "body": "前期では、研究テーマの選び方や、研究の問いの作り方を学びます。資料を読み、考えをまとめ、クラスメートと話し合います。また、短い発表をして自分の考えを伝えます。\n\n後期では、学術的な論文を書く練習をします。テーマは言語や文化、コミュニケーションなどです。卒業論文は約20ページです。この授業は、4年生で論文を書くための準備になります。",
+            "signoff": "News Today をご覧いただきありがとうございます。"
+          }
+        }
+      },
+      "vocab": [
+        {
+          "id": "w1",
+          "headword": "research question",
+          "pos": "noun",
+          "def_en": "a clear question that a study tries to answer",
+          "ja": "研究課題・研究の問い"
+        },
+        {
+          "id": "w2",
+          "headword": "presentation",
+          "pos": "noun",
+          "def_en": "a talk to explain ideas to others",
+          "ja": "発表"
+        },
+        {
+          "id": "w3",
+          "headword": "thesis",
+          "pos": "noun",
+          "def_en": "a long academic paper written for a degree",
+          "ja": "論文・卒業論文"
+        }
+      ]
+    }
+  ]
 }
-
-
 ]
